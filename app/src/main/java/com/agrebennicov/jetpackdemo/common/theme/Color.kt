@@ -2,7 +2,12 @@ package com.agrebennicov.jetpackdemo.common.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val Background = Color(0xFFFFFFFF)
+val Accent = Color(0xFF83A2E5)
+val ButtonBackgroundMain = Color(0xFFEDCDDD)
+val ButtonBackgroundSecondary = Color(0xFFD8DCE8)
+
+val TextHeader = Color(0xFFFFFFFF)
+val TextButton = Color(0xFFFFFFFF)
+val TextPrimary = Color(0xFF000000)
+val TextSecondary = Color(0x80000000)
