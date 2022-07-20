@@ -8,6 +8,7 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 /buildSrc/build
+/.idea/misc.xml
 /buildSrc/.gradle
 .DS_Store
 /build
