@@ -36,6 +36,13 @@ val Typography = Typography(
         fontSize = 14.sp,
         color = TextSecondary
     ),
+    subtitle1 = TextStyle(
+        fontFamily = Fonts,
+        fontWeight = FontWeight.Bold,
+        fontSize = 14.sp,
+        color = TextPrimary,
+        lineHeight = 16.sp
+    ),
     caption = TextStyle(
         fontFamily = Fonts,
         fontWeight = FontWeight.SemiBold,
