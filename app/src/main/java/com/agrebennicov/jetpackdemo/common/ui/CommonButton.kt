@@ -75,7 +75,7 @@ fun CommonButtonPreview() {
                     .wrapContentHeight()
                     .padding(16.dp),
                 text = "Button Preview",
-                backGroundColor = ButtonBackgroundMain,
+                backGroundColor = MaterialTheme.colors.primaryVariant,
                 onButtonClicked = {}
             )
 
@@ -85,7 +85,7 @@ fun CommonButtonPreview() {
                     .wrapContentHeight()
                     .padding(16.dp),
                 text = "Button Preview",
-                backGroundColor = ButtonBackgroundSecondary,
+                backGroundColor = MaterialTheme.colors.primaryVariant,
                 icon = R.drawable.ic_next,
                 onButtonClicked = {}
             )
