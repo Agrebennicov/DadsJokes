@@ -9,14 +9,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.agrebennicov.jetpackdemo.R
 import com.agrebennicov.jetpackdemo.common.theme.JetpackDemoTheme
 import kotlinx.coroutines.CoroutineScope
@@ -29,17 +31,18 @@ enum class ThreePartAnimation(val angle: Float, val delay: suspend CoroutineScop
     THIRD(120f, delay = { delay(1000) })
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ErrorPlaceholder(
+    modifier: Modifier = Modifier,
     text: String? = null,
     @DrawableRes topImage: Int? = null,
-    @DrawableRes centerImage: Int? = null
+    @DrawableRes centerImage: Int? = null,
+    onTryAgainButtonClick: (() -> Unit)? = null,
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+    ConstraintLayout(modifier = modifier.fillMaxSize()) {
+        val (dadImage, errorImage, errorText, tryAgainButton) = createRefs()
+
         if (topImage != null) {
             var doAnimation: ThreePartAnimation by remember { mutableStateOf(ThreePartAnimation.NONE) }
             LaunchedEffect(key1 = Unit) {
@@ -64,20 +67,55 @@ fun ErrorPlaceholder(
                             pivotFractionY = 0.8f,
                         ),
                         rotationZ = angle,
-                    ),
+                    )
+                    .constrainAs(errorImage) {
+                        bottom.linkTo(dadImage.top)
+                        start.linkTo(dadImage.start)
+                        end.linkTo(dadImage.end)
+                    },
                 painter = painterResource(id = topImage), contentDescription = null
             )
         }
+
         if (centerImage != null) {
-            Spacer(modifier = Modifier.height(10.dp))
-            Image(painter = painterResource(id = centerImage), contentDescription = null)
+            Image(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .constrainAs(dadImage) { centerTo(parent) },
+                painter = painterResource(id = centerImage),
+                contentDescription = null
+            )
         }
+
         if (text != null) {
-            Spacer(modifier = Modifier.height(8.dp))
             Text(
+                modifier = modifier
+                    .padding(8.dp)
+                    .constrainAs(errorText) {
+                        top.linkTo(dadImage.bottom)
+                        start.linkTo(dadImage.start)
+                        end.linkTo(dadImage.end)
+                    },
                 text = text,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.subtitle1
+            )
+        }
+
+        if (onTryAgainButtonClick != null) {
+            CommonButton(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .constrainAs(tryAgainButton) {
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                text = "Try Again",
+                backGroundColor = MaterialTheme.colors.primaryVariant,
+                onButtonClicked = onTryAgainButtonClick,
             )
         }
     }
@@ -90,7 +128,20 @@ fun ErrorPlaceholderPreview() {
         ErrorPlaceholder(
             topImage = R.drawable.ic_error,
             centerImage = R.drawable.ic_dad,
-            text = "Dad is tired :( \nPlease try again another time"
+            text = stringResource(id = R.string.common_error)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ErrorPlaceholderTryAgainPreview() {
+    JetpackDemoTheme {
+        ErrorPlaceholder(
+            topImage = R.drawable.ic_error,
+            centerImage = R.drawable.ic_dad,
+            text = stringResource(id = R.string.common_error),
+            onTryAgainButtonClick = {}
         )
     }
 }

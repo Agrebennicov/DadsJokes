@@ -12,23 +12,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agrebennicov.jetpackdemo.R
 import com.agrebennicov.jetpackdemo.common.theme.JetpackDemoTheme
+import com.agrebennicov.jetpackdemo.common.theme.Surface
 
 @Composable
 fun BottomNavBar(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     items: List<BottomNavItem>,
-    onItemSelected: (Int) -> Unit
+    onItemSelected: (String) -> Unit
 ) {
     BottomAppBar(
         modifier = modifier
+            .background(color = MaterialTheme.colors.surface)
             .clip(shape = RoundedCornerShape(15.dp, 15.dp, 0.dp, 0.dp))
     ) {
-        items.forEachIndexed { index, item ->
+        items.forEach { item ->
             BottomNavigationItem(
                 icon = {
                     Box(modifier = Modifier.fillMaxSize()) {
@@ -40,7 +43,7 @@ fun BottomNavBar(
                                     .padding(top = 1.dp)
                                     .align(Alignment.TopCenter)
                                     .background(
-                                        color = MaterialTheme.colors.surface,
+                                        color = Color.White,
                                         shape = RoundedCornerShape(
                                             bottomEnd = 15.dp,
                                             bottomStart = 15.dp
@@ -60,7 +63,7 @@ fun BottomNavBar(
                     }
                 },
                 selected = item.isSelected,
-                onClick = { onItemSelected(index) }
+                onClick = { onItemSelected(item.route) }
             )
         }
     }

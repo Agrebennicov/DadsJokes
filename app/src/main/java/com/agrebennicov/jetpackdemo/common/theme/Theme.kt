@@ -10,16 +10,16 @@ private val DarkColorPalette = darkColors(
     primary = Primary,
     primaryVariant = PrimaryVariant,
     secondary = Secondary,
-    surface = Background,
-    background = Surface
+    surface = Surface,
+    background = Background
 )
 
 private val LightColorPalette = lightColors(
     primary = Primary,
     primaryVariant = PrimaryVariant,
     secondary = Secondary,
-    surface = Background,
-    background = Surface
+    surface = Surface,
+    background = Background
 )
 
 @Composable

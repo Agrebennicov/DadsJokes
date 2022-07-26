@@ -4,10 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,7 +14,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agrebennicov.jetpackdemo.R
-import com.agrebennicov.jetpackdemo.common.theme.*
+import com.agrebennicov.jetpackdemo.common.theme.Background
+import com.agrebennicov.jetpackdemo.common.theme.CardShape
+import com.agrebennicov.jetpackdemo.common.theme.JetpackDemoTheme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -26,35 +25,48 @@ fun CommonButton(
     text: String,
     backGroundColor: Color,
     @DrawableRes icon: Int? = null,
+    isLoading: Boolean = false,
+    enabled: Boolean = true,
     onButtonClicked: () -> Unit
 ) {
     Card(
         modifier = modifier,
         shape = CardShape.medium,
         elevation = 5.dp,
-        onClick = onButtonClicked
+        onClick = onButtonClicked,
+        enabled = enabled
     ) {
         Box(
             modifier = Modifier
                 .background(backGroundColor)
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            Text(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .align(Alignment.Center),
-                style = MaterialTheme.typography.button,
-                text = text
-            )
-            if (icon != null) {
-                Image(
+            if (isLoading) {
+                CircularProgressIndicator(
                     modifier = Modifier
                         .size(24.dp)
-                        .align(Alignment.CenterEnd),
-                    painter = painterResource(icon),
-                    contentScale = ContentScale.FillBounds,
-                    contentDescription = "Action Icon",
+                        .align(Alignment.Center),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colors.surface
                 )
+            } else {
+                Text(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(Alignment.Center),
+                    style = MaterialTheme.typography.button,
+                    text = text
+                )
+                if (icon != null) {
+                    Image(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .align(Alignment.CenterEnd),
+                        painter = painterResource(icon),
+                        contentScale = ContentScale.FillBounds,
+                        contentDescription = "Action Icon",
+                    )
+                }
             }
         }
     }
@@ -87,6 +99,18 @@ fun CommonButtonPreview() {
                 text = "Button Preview",
                 backGroundColor = MaterialTheme.colors.primaryVariant,
                 icon = R.drawable.ic_next,
+                onButtonClicked = {}
+            )
+
+            CommonButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(16.dp),
+                text = "Button Preview",
+                backGroundColor = MaterialTheme.colors.primaryVariant,
+                icon = R.drawable.ic_next,
+                isLoading = true,
                 onButtonClicked = {}
             )
         }
