@@ -1,6 +1,8 @@
 package com.agrebennicov.jetpackdemo.common.ui
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,8 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agrebennicov.jetpackdemo.R
 import com.agrebennicov.jetpackdemo.common.theme.JetpackDemoTheme
-import com.agrebennicov.jetpackdemo.common.theme.Surface
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun BottomNavBar(
     modifier: Modifier = Modifier,
@@ -34,32 +36,38 @@ fun BottomNavBar(
         items.forEach { item ->
             BottomNavigationItem(
                 icon = {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        if (item.isSelected) {
-                            Box(
-                                modifier = Modifier
-                                    .height(4.dp)
-                                    .fillMaxWidth(0.6f)
-                                    .padding(top = 1.dp)
-                                    .align(Alignment.TopCenter)
-                                    .background(
-                                        color = Color.White,
-                                        shape = RoundedCornerShape(
-                                            bottomEnd = 15.dp,
-                                            bottomStart = 15.dp
+                    AnimatedContent(
+                        modifier = Modifier.fillMaxSize(),
+                        targetState = item
+                    ) { state ->
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            if (state.isSelected) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(4.dp)
+                                        .fillMaxWidth(0.6f)
+                                        .padding(top = 1.dp)
+                                        .align(Alignment.TopCenter)
+                                        .background(
+                                            color = Color.White,
+                                            shape = RoundedCornerShape(
+                                                bottomEnd = 15.dp,
+                                                bottomStart = 15.dp
+                                            )
                                         )
-                                    )
+                                )
+                            }
+                            val icon =
+                                if (state.isSelected) state.selectedImage else state.unSelectedImage
+                            Icon(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .size(24.dp)
+                                    .align(Alignment.Center),
+                                painter = painterResource(id = icon),
+                                contentDescription = state.route
                             )
                         }
-                        val icon = if (item.isSelected) item.selectedImage else item.unSelectedImage
-                        Icon(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .size(24.dp)
-                                .align(Alignment.Center),
-                            painter = painterResource(id = icon),
-                            contentDescription = item.route
-                        )
                     }
                 },
                 selected = item.isSelected,

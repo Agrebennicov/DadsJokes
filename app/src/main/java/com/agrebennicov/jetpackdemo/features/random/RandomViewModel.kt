@@ -1,9 +1,7 @@
 package com.agrebennicov.jetpackdemo.features.random
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.agrebennicov.jetpackdemo.common.BaseViewModel
 import com.agrebennicov.jetpackdemo.common.pojo.Joke
 import com.agrebennicov.jetpackdemo.features.random.repository.RandomRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,27 +11,24 @@ import javax.inject.Inject
 @HiltViewModel
 class RandomViewModel @Inject constructor(
     private val randomRepository: RandomRepository
-) : ViewModel() {
-    private val _state = mutableStateOf(RandomState(isLoadingFirstJoke = true))
-    internal val state: State<RandomState> = _state
-
-    fun onAction(action: RandomAction) {
-        _state.value = when (action) {
+) : BaseViewModel<RandomAction, RandomState>(RandomState(isLoadingFirstJoke = true)) {
+    override fun onAction(action: RandomAction) {
+        mutableState.value = when (action) {
             RandomAction.LoadFirstJoke -> {
                 fetchJoke()
-                reduce(action, _state.value)
+                reduce(action, mutableState.value)
             }
             is RandomAction.LoadNextJoke -> {
                 fetchJoke()
-                reduce(action, _state.value)
+                reduce(action, mutableState.value)
             }
             is RandomAction.JokeLoaded,
-            RandomAction.ShowError -> reduce(action, _state.value)
+            RandomAction.ShowError -> reduce(action, mutableState.value)
             else -> throw IllegalStateException("TODO Soon")
         }
     }
 
-    private fun reduce(action: RandomAction, oldState: RandomState): RandomState {
+    override fun reduce(action: RandomAction, oldState: RandomState): RandomState {
         return when (action) {
             is RandomAction.JokeLoaded -> oldState.copy(
                 joke = action.joke,

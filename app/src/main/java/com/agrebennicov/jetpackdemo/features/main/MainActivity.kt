@@ -61,8 +61,8 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 newRoute = it
                             )
-                            viewModel.onItemSelected(it)
-                        }
+                            viewModel.onAction(MainAction.TabChanged(it))
+                        },
                     )
                 }
             }
