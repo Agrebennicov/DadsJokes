@@ -1,4 +1,3 @@
-
 //version constants for the Kotlin DSL dependencies
 object Versions {
     //app level
@@ -15,6 +14,11 @@ object Versions {
     const val navigation = "2.5.0"
     const val hiltAndroid = "2.38.1"
     const val hiltCompiler = "1.0.0"
+    const val retrofit = "2.9.0"
+    const val gsonConverter = "2.9.0"
+    const val okHttpInterceptor = "4.10.0"
+    const val accompanist = "0.24.13-rc"
+    const val constraintLayout = "1.0.0-beta02"
 
     //test
     const val junit = "4.12"

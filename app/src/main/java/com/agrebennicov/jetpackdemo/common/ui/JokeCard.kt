@@ -18,15 +18,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agrebennicov.jetpackdemo.R
+import com.agrebennicov.jetpackdemo.common.pojo.Joke
 import com.agrebennicov.jetpackdemo.common.theme.Background
-import com.agrebennicov.jetpackdemo.common.theme.ButtonBackgroundMain
 import com.agrebennicov.jetpackdemo.common.theme.JetpackDemoTheme
-
-data class Joke(val line1: String, val line2: String, val isSaved: Boolean, val isSelected: Boolean)
+import com.agrebennicov.jetpackdemo.common.theme.Surface
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun JokeCard(
+    modifier: Modifier = Modifier,
     joke: Joke,
     actionsEnabled: Boolean,
     isSelectionActive: Boolean,
@@ -34,76 +34,74 @@ fun JokeCard(
     onSaveClicked: (() -> Unit)? = null,
     onSelect: ((Boolean) -> Unit)? = null,
 ) {
-    Card(
-        elevation = 6.dp,
-        modifier = Modifier
-            .combinedClickable(
-                onClick = { if (isSelectionActive) onSelect?.invoke(false) },
-                onLongClick = { if (!isSelectionActive) onSelect?.invoke(true) }
-            ),
-        backgroundColor = if (joke.isSelected) ButtonBackgroundMain else Background
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+    key(joke.content) {
+        Card(
+            elevation = 16.dp,
+            modifier = modifier
+                .combinedClickable(
+                    onClick = { if (isSelectionActive) onSelect?.invoke(false) },
+                    onLongClick = { if (!isSelectionActive) onSelect?.invoke(true) }
+                ),
+            backgroundColor = if (joke.isSelected) Surface else Background
         ) {
-            Text(
-                text = joke.line1,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.body1
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = joke.line2,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.body1
-            )
-            if (actionsEnabled) {
-                Spacer(modifier = Modifier.height(24.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Crossfade(
-                        targetState = joke.isSelected,
-                        animationSpec = tween(durationMillis = 100)
-                    ) { isSelected ->
-                        if (isSelectionActive)
-                            if (isSelected)
-                                Image(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(R.drawable.ic_checked_circle),
-                                    contentDescription = "Checked"
-                                )
-                            else
-                                Image(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(R.drawable.ic_unchecked_circle),
-                                    contentDescription = "Unchecked"
-                                )
-                    }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = joke.content,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.body1
+                )
+                if (actionsEnabled) {
+                    Spacer(modifier = Modifier.height(24.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Image(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clickable { onShareClicked?.invoke() },
-                            painter = painterResource(R.drawable.ic_share_accent),
-                            contentDescription = "Share"
-                        )
-                        Spacer(modifier = Modifier.width(24.dp))
-                        val saveIcon =
-                            if (joke.isSaved) R.drawable.ic_save_accent_clicked else R.drawable.ic_save_accent
-                        Image(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clickable { onSaveClicked?.invoke() },
-                            painter = painterResource(saveIcon),
-                            contentDescription = "Save"
-                        )
+                        Crossfade(
+                            targetState = joke.isSelected,
+                            animationSpec = tween(durationMillis = 100)
+                        ) { isSelected ->
+                            if (isSelectionActive)
+                                if (isSelected)
+                                    Image(
+                                        modifier = Modifier.size(24.dp),
+                                        painter = painterResource(R.drawable.ic_checked_circle),
+                                        contentDescription = "Checked"
+                                    )
+                                else
+                                    Image(
+                                        modifier = Modifier.size(24.dp),
+                                        painter = painterResource(R.drawable.ic_unchecked_circle),
+                                        contentDescription = "Unchecked"
+                                    )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Image(
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clickable { onShareClicked?.invoke() },
+                                painter = painterResource(R.drawable.ic_share_accent),
+                                contentDescription = "Share"
+                            )
+                            Spacer(modifier = Modifier.width(24.dp))
+                            val saveIcon =
+                                if (joke.isSaved) R.drawable.ic_save_accent_clicked else R.drawable.ic_save_accent
+                            Image(
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clickable { onSaveClicked?.invoke() },
+                                painter = painterResource(saveIcon),
+                                contentDescription = "Save"
+                            )
+                        }
                     }
                 }
             }
@@ -122,10 +120,9 @@ fun JokeCardPreview() {
         ) {
             JokeCard(
                 joke = Joke(
-                    "What do you call a fashionable lawn statue with an excellent sense of rhythmn?",
-                    "A metro-gnome",
-                    true,
-                    false
+                    "What do you call a fashionable lawn statue with an excellent sense of rhythmn?\nA metro-gnome",
+                    isSaved = true,
+                    isSelected = false
                 ),
                 actionsEnabled = true,
                 isSelectionActive = false
@@ -142,23 +139,20 @@ fun JokeListPreview() {
             mutableStateOf(
                 listOf(
                     Joke(
-                        "What do you call a fashionable lawn statue with an excellent sense of rhythmn?",
-                        "A metro-gnome",
-                        true,
-                        false
+                        "Wha-gnome",
+                        isSaved = true,
+                        isSelected = false
                     ),
                     Joke(
-                        "What do you call a fashionable lawn statue with an excellent sense of rhythmn?",
-                        "A metro-gnome",
-                        true,
-                        false
+                        "What do you call a fashionable lawn statue with an excellent sense of rhythmn?\nA metro-gnome",
+                        isSaved = true,
+                        isSelected = false
                     ),
                     Joke(
-                        "What do you call a fashionable lawn statue with an excellent sense of rhythmn?",
-                        "A metro-gnome",
-                        true,
-                        false
-                    ),
+                        "What do you call a fashionable lawn statue with an excellent sense of rhythmn?\nA metro-gnome",
+                        isSaved = true,
+                        isSelected = false
+                    )
                 )
             )
         }
@@ -180,7 +174,7 @@ fun JokeListPreview() {
             ) {
                 items(jokeList.size) { i ->
                     JokeCard(
-                        jokeList[i],
+                        joke = jokeList[i],
                         actionsEnabled = true,
                         isSelectionActive = isSelectionActive,
                         onSelect = { selectionActive ->

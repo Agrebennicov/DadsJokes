@@ -22,12 +22,29 @@ object AppDependencies {
 
     // Navigation
     private const val navigation = "androidx.navigation:navigation-compose:${Versions.navigation}"
-    private const val hiltNavigation = "androidx.hilt:hilt-navigation-compose:${Versions.hiltCompiler}"
+    private const val hiltNavigation =
+        "androidx.hilt:hilt-navigation-compose:${Versions.hiltCompiler}"
 
     // DI
     private const val hilt = "com.google.dagger:hilt-android:${Versions.hiltAndroid}"
-    private const val hiltAndroidCompiler = "com.google.dagger:hilt-android-compiler:${Versions.hiltAndroid}"
+    private const val hiltAndroidCompiler =
+        "com.google.dagger:hilt-android-compiler:${Versions.hiltAndroid}"
     private const val hiltCompiler = "androidx.hilt:hilt-compiler:${Versions.hiltCompiler}"
+
+    // Networking
+    private const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
+    private const val gsonConverter =
+        "com.squareup.retrofit2:converter-gson:${Versions.gsonConverter}"
+    private const val okHttpInterceptor =
+        "com.squareup.okhttp3:logging-interceptor:${Versions.okHttpInterceptor}"
+
+    // UI
+    private const val systemUiController =
+        "com.google.accompanist:accompanist-systemuicontroller:${Versions.accompanist}"
+    private const val animationNavigation =
+        "com.google.accompanist:accompanist-navigation-animation:${Versions.accompanist}"
+    private const val constraintLayout =
+        "androidx.constraintlayout:constraintlayout-compose:${Versions.constraintLayout}"
 
     //test libs
     private const val junit = "junit:junit:${Versions.junit}"
@@ -47,6 +64,12 @@ object AppDependencies {
         add(navigation)
         add(hilt)
         add(hiltNavigation)
+        add(retrofit)
+        add(gsonConverter)
+        add(okHttpInterceptor)
+        add(systemUiController)
+        add(animationNavigation)
+        add(constraintLayout)
     }
 
     val kaptLibraries = arrayListOf<String>().apply {

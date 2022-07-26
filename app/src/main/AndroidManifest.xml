@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.agrebennicov.jetpackdemo">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".common.MainApplication"
         android:allowBackup="true"
@@ -10,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
         <activity
-            android:name=".common.MainActivity"
+            android:name=".features.main.MainActivity"
             android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.JetpackDemo">
