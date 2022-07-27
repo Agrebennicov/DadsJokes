@@ -3,6 +3,8 @@ package com.agrebennicov.jetpackdemo.common.ui
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,7 +12,7 @@ import androidx.compose.material.BottomAppBar
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,35 +30,22 @@ fun BottomNavBar(
     items: List<BottomNavItem>,
     onItemSelected: (String) -> Unit
 ) {
+    var selectedIndex by remember { mutableStateOf(0) }
+
     BottomAppBar(
         modifier = modifier
             .background(color = MaterialTheme.colors.surface)
             .clip(shape = RoundedCornerShape(15.dp, 15.dp, 0.dp, 0.dp))
     ) {
-        items.forEach { item ->
+        items.forEachIndexed { index, item ->
             BottomNavigationItem(
                 icon = {
                     AnimatedContent(
                         modifier = Modifier.fillMaxSize(),
                         targetState = item
                     ) { state ->
+                        if (state.isSelected) selectedIndex = index
                         Box(modifier = Modifier.fillMaxSize()) {
-                            if (state.isSelected) {
-                                Box(
-                                    modifier = Modifier
-                                        .height(4.dp)
-                                        .fillMaxWidth(0.6f)
-                                        .padding(top = 1.dp)
-                                        .align(Alignment.TopCenter)
-                                        .background(
-                                            color = Color.White,
-                                            shape = RoundedCornerShape(
-                                                bottomEnd = 15.dp,
-                                                bottomStart = 15.dp
-                                            )
-                                        )
-                                )
-                            }
                             val icon =
                                 if (state.isSelected) state.selectedImage else state.unSelectedImage
                             Icon(
@@ -72,6 +61,50 @@ fun BottomNavBar(
                 },
                 selected = item.isSelected,
                 onClick = { onItemSelected(item.route) }
+            )
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+    )
+
+    val transition = updateTransition(
+        targetState = selectedIndex,
+        label = "bottomIndicatorTransition"
+    )
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(3.dp)
+    ) {
+
+        val indicatorPosition by transition.animateDp(label = "bottomIndicatorTransitionDp") { state ->
+            maxWidth.div(4).times(state)
+        }
+
+        Box(
+            modifier = Modifier
+                .width(maxWidth.div(4))
+                .height(3.dp)
+                .offset(x = indicatorPosition)
+        ) {
+            Box(
+                modifier = Modifier
+                    .height(4.dp)
+                    .fillMaxWidth(0.6f)
+                    .fillMaxHeight()
+                    .padding(top = 1.dp)
+                    .align(Alignment.TopCenter)
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(
+                            bottomEnd = 15.dp,
+                            bottomStart = 15.dp
+                        )
+                    )
             )
         }
     }

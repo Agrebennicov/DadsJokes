@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.SideEffect
@@ -54,16 +55,18 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         graph = mainGraph
                     )
-                    BottomNavBar(
-                        items = viewModel.state.value.items,
-                        onItemSelected = {
-                            handleBottomBarItemSelection(
-                                navController = navController,
-                                newRoute = it
-                            )
-                            viewModel.onAction(MainAction.TabChanged(it))
-                        },
-                    )
+                    Box {
+                        BottomNavBar(
+                            items = viewModel.state.value.items,
+                            onItemSelected = {
+                                handleBottomBarItemSelection(
+                                    navController = navController,
+                                    newRoute = it
+                                )
+                                viewModel.onAction(MainAction.TabChanged(it))
+                            },
+                        )
+                    }
                 }
             }
         }
