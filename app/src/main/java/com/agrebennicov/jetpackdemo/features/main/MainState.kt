@@ -32,3 +32,7 @@ data class MainState(
         )
     )
 )
+
+sealed class MainAction {
+    data class TabChanged(val newRoute: String) : MainAction()
+}
