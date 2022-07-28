@@ -15,10 +15,10 @@ data class Joke(
     @Ignore
     val isSelected: Boolean
 ) {
-    constructor(id: String, content: String, isSaved: Boolean) : this(
+    constructor(id: String, content: String) : this(
         id,
         content,
-        isSaved,
+        false,
         false
     )
 
