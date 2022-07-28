@@ -65,12 +65,6 @@ fun BottomNavBar(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(1.dp)
-    )
-
     val transition = updateTransition(
         targetState = selectedIndex,
         label = "bottomIndicatorTransition"
