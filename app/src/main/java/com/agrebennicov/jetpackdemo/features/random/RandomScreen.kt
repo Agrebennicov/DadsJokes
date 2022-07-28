@@ -1,6 +1,7 @@
 package com.agrebennicov.jetpackdemo.features.random
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
@@ -27,8 +28,8 @@ import com.agrebennicov.jetpackdemo.common.util.getNonAnimatedContentTransform
 fun RandomScreen(
     modifier: Modifier = Modifier,
     state: State<RandomState>,
-    onSaveClick: () -> Unit,
-    onDeleteClick: () -> Unit,
+    onSaveClick: (Joke) -> Unit,
+    onDeleteClick: (Joke) -> Unit,
     onShareClick: () -> Unit,
     onNextJokeClick: () -> Unit,
     onTryAgainButtonClick: () -> Unit
@@ -52,10 +53,13 @@ fun RandomScreen(
                 val loadedNextJokeSuccessfully =
                     initialState.isLoadingNextJoke && !targetState.showError
                 val isLoadingNextJoke = targetState.isLoadingNextJoke
-                val saved = initialState.isSavingJoke || initialState.isDeletingJoke || targetState.isSavingJoke || targetState.isDeletingJoke
+                val saved =
+                    initialState.joke != null && !initialState.joke!!.isSaved && targetState.joke!!.isSaved
+                val deleted =
+                    initialState.joke != null && initialState.joke!!.isSaved && !targetState.joke!!.isSaved
 
                 when {
-                    loadedNextJokeSuccessfully || isLoadingNextJoke || saved -> {
+                    loadedNextJokeSuccessfully || isLoadingNextJoke || saved || deleted -> {
                         getNonAnimatedContentTransform()
                     }
                     else -> {
@@ -72,8 +76,6 @@ fun RandomScreen(
                         modifier = modifier,
                         joke = state.joke,
                         isNextJokeLoading = state.isLoadingNextJoke,
-                        isSaving = state.isSavingJoke,
-                        isDeleting = state.isDeletingJoke,
                         onSaveClick = onSaveClick,
                         onDeleteClick = onDeleteClick,
                         onShareClick = onShareClick,
@@ -94,10 +96,8 @@ private fun ShowContent(
     modifier: Modifier,
     joke: Joke,
     isNextJokeLoading: Boolean,
-    isSaving: Boolean,
-    isDeleting: Boolean,
-    onSaveClick: () -> Unit,
-    onDeleteClick: () -> Unit,
+    onSaveClick: (Joke) -> Unit,
+    onDeleteClick: (Joke) -> Unit,
     onShareClick: () -> Unit,
     onNextJokeClick: () -> Unit
 ) {
@@ -123,9 +123,12 @@ private fun ShowContent(
                 text = stringResource(if (joke.isSaved) R.string.delete else R.string.save),
                 backGroundColor = MaterialTheme.colors.primaryVariant,
                 icon = if (joke.isSaved) R.drawable.ic_save_white_clicked else R.drawable.ic_save_white,
-                onButtonClicked = if (joke.isSaved) onDeleteClick else onSaveClick,
-                enabled = !isNextJokeLoading || isSaving || isDeleting,
-                isLoading = isSaving || isDeleting
+                onButtonClicked = if (joke.isSaved) {
+                    { onDeleteClick(joke) }
+                } else {
+                    { onSaveClick(joke) }
+                },
+                enabled = !isNextJokeLoading
             )
 
             Spacer(modifier = Modifier.size(16.dp))

@@ -22,10 +22,10 @@ data class Joke(
         false
     )
 
-    constructor(jokeResponse: JokeResponse, isJokeSaved: Boolean) : this(
+    constructor(jokeResponse: JokeResponse) : this(
         jokeResponse.id,
         jokeResponse.content,
-        isJokeSaved,
+        false,
         false
     )
 }

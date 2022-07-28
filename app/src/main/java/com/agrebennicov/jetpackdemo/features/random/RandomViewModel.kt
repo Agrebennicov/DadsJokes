@@ -13,36 +13,30 @@ class RandomViewModel @Inject constructor(
     private val randomRepository: RandomRepository
 ) : BaseViewModel<RandomAction, RandomState>(RandomState(isLoadingFirstJoke = true)) {
 
-    private var savedJokes: List<Joke> = emptyList()
-
     init {
-        viewModelScope.launch {
-            randomRepository.getSavedJokes().collect { result ->
-                result.onSuccess { savedJokes = it }
-            }
-        }
+        onAction(RandomAction.LoadFirstJoke)
     }
 
     override fun onAction(action: RandomAction) {
-        mutableState.value = when (action) {
+        when (action) {
             RandomAction.LoadFirstJoke -> {
+                mutableState.value = reduce(action, mutableState.value)
                 fetchJoke()
-                reduce(action, mutableState.value)
             }
             is RandomAction.LoadNextJoke -> {
+                mutableState.value = reduce(action, mutableState.value)
                 fetchJoke()
-                reduce(action, mutableState.value)
             }
             is RandomAction.SaveJoke -> {
-                mutableState.value.joke?.let { saveJoke(it) }
-                reduce(action, mutableState.value)
+                mutableState.value = reduce(action, mutableState.value)
+                saveJoke(action.joke)
             }
             is RandomAction.DeleteJoke -> {
-                mutableState.value.joke?.let { deleteJoke(it) }
-                reduce(action, mutableState.value)
+                mutableState.value = reduce(action, mutableState.value)
+                deleteJoke(action.joke)
             }
             is RandomAction.JokeLoaded,
-            RandomAction.ShowError -> reduce(action, mutableState.value)
+            RandomAction.ShowError -> mutableState.value = reduce(action, mutableState.value)
             else -> throw IllegalStateException("TODO Soon")
         }
     }
@@ -53,16 +47,14 @@ class RandomViewModel @Inject constructor(
                 joke = action.joke,
                 isLoadingFirstJoke = false,
                 isLoadingNextJoke = false,
-                isSavingJoke = false,
-                isDeletingJoke = false,
                 showError = false
             )
             RandomAction.LoadFirstJoke -> oldState.copy(
                 isLoadingFirstJoke = true
             )
             RandomAction.LoadNextJoke -> oldState.copy(isLoadingNextJoke = true)
-            RandomAction.SaveJoke -> oldState.copy(isSavingJoke = true)
-            RandomAction.DeleteJoke -> oldState.copy(isDeletingJoke = true)
+            is RandomAction.SaveJoke -> oldState.copy(joke = action.joke.copy(isSaved = true))
+            is RandomAction.DeleteJoke -> oldState.copy(joke = action.joke.copy(isSaved = false))
             RandomAction.ShowError -> oldState.copy(
                 showError = true,
                 joke = null,
@@ -80,10 +72,7 @@ class RandomViewModel @Inject constructor(
                 val jokeResponse = it.getOrNull()
                 when {
                     it.isSuccess && jokeResponse != null -> {
-                        val isJokeSaved = savedJokes.map {item -> item.id }.contains(jokeResponse.id)
-                        onAction(
-                            RandomAction.JokeLoaded(Joke(jokeResponse, isJokeSaved))
-                        )
+                        onAction(RandomAction.JokeLoaded(Joke(jokeResponse)))
                     }
                     else -> onAction(RandomAction.ShowError)
                 }
@@ -93,33 +82,13 @@ class RandomViewModel @Inject constructor(
 
     private fun saveJoke(joke: Joke) {
         viewModelScope.launch {
-            randomRepository.addJoke(joke).collect { response ->
-                response.onSuccess {
-                    onAction(
-                        RandomAction.JokeLoaded(joke.copy(isSaved = true))
-                    )
-                }.onFailure {
-                    onAction(
-                        RandomAction.JokeLoaded(joke)
-                    )
-                }
-            }
+            randomRepository.addJoke(joke).collect {}
         }
     }
 
     private fun deleteJoke(joke: Joke) {
         viewModelScope.launch {
-            randomRepository.deleteJoke(joke).collect { response ->
-                response.onSuccess {
-                    onAction(
-                        RandomAction.JokeLoaded(joke.copy(isSaved = false))
-                    )
-                }.onFailure {
-                    onAction(
-                        RandomAction.JokeLoaded(joke)
-                    )
-                }
-            }
+            randomRepository.deleteJoke(joke).collect {}
         }
     }
 }
