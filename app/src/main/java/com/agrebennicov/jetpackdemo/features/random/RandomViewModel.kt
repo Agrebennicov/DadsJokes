@@ -12,6 +12,17 @@ import javax.inject.Inject
 class RandomViewModel @Inject constructor(
     private val randomRepository: RandomRepository
 ) : BaseViewModel<RandomAction, RandomState>(RandomState(isLoadingFirstJoke = true)) {
+
+    private var savedJokes: List<Joke> = emptyList()
+
+    init {
+        viewModelScope.launch {
+            randomRepository.getSavedJokes().collect { result ->
+                result.onSuccess { savedJokes = it }
+            }
+        }
+    }
+
     override fun onAction(action: RandomAction) {
         mutableState.value = when (action) {
             RandomAction.LoadFirstJoke -> {
@@ -20,6 +31,14 @@ class RandomViewModel @Inject constructor(
             }
             is RandomAction.LoadNextJoke -> {
                 fetchJoke()
+                reduce(action, mutableState.value)
+            }
+            is RandomAction.SaveJoke -> {
+                mutableState.value.joke?.let { saveJoke(it) }
+                reduce(action, mutableState.value)
+            }
+            is RandomAction.DeleteJoke -> {
+                mutableState.value.joke?.let { deleteJoke(it) }
                 reduce(action, mutableState.value)
             }
             is RandomAction.JokeLoaded,
@@ -34,12 +53,16 @@ class RandomViewModel @Inject constructor(
                 joke = action.joke,
                 isLoadingFirstJoke = false,
                 isLoadingNextJoke = false,
+                isSavingJoke = false,
+                isDeletingJoke = false,
                 showError = false
             )
             RandomAction.LoadFirstJoke -> oldState.copy(
                 isLoadingFirstJoke = true
             )
             RandomAction.LoadNextJoke -> oldState.copy(isLoadingNextJoke = true)
+            RandomAction.SaveJoke -> oldState.copy(isSavingJoke = true)
+            RandomAction.DeleteJoke -> oldState.copy(isDeletingJoke = true)
             RandomAction.ShowError -> oldState.copy(
                 showError = true,
                 joke = null,
@@ -50,15 +73,51 @@ class RandomViewModel @Inject constructor(
         }
     }
 
+
     private fun fetchJoke() {
         viewModelScope.launch {
             randomRepository.fetchRandomJoke().collect {
                 val jokeResponse = it.getOrNull()
                 when {
-                    it.isSuccess && jokeResponse != null -> onAction(
-                        RandomAction.JokeLoaded(Joke(jokeResponse))
-                    )
+                    it.isSuccess && jokeResponse != null -> {
+                        val isJokeSaved = savedJokes.map {item -> item.id }.contains(jokeResponse.id)
+                        onAction(
+                            RandomAction.JokeLoaded(Joke(jokeResponse, isJokeSaved))
+                        )
+                    }
                     else -> onAction(RandomAction.ShowError)
+                }
+            }
+        }
+    }
+
+    private fun saveJoke(joke: Joke) {
+        viewModelScope.launch {
+            randomRepository.addJoke(joke).collect { response ->
+                response.onSuccess {
+                    onAction(
+                        RandomAction.JokeLoaded(joke.copy(isSaved = true))
+                    )
+                }.onFailure {
+                    onAction(
+                        RandomAction.JokeLoaded(joke)
+                    )
+                }
+            }
+        }
+    }
+
+    private fun deleteJoke(joke: Joke) {
+        viewModelScope.launch {
+            randomRepository.deleteJoke(joke).collect { response ->
+                response.onSuccess {
+                    onAction(
+                        RandomAction.JokeLoaded(joke.copy(isSaved = false))
+                    )
+                }.onFailure {
+                    onAction(
+                        RandomAction.JokeLoaded(joke)
+                    )
                 }
             }
         }

@@ -38,6 +38,11 @@ object AppDependencies {
     private const val okHttpInterceptor =
         "com.squareup.okhttp3:logging-interceptor:${Versions.okHttpInterceptor}"
 
+    // Database
+    private const val room = "androidx.room:room-runtime:${Versions.room}"
+    private const val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
+    private const val roomKtx = "androidx.room:room-ktx:${Versions.room}"
+
     // UI
     private const val systemUiController =
         "com.google.accompanist:accompanist-systemuicontroller:${Versions.accompanist}"
@@ -67,6 +72,8 @@ object AppDependencies {
         add(retrofit)
         add(gsonConverter)
         add(okHttpInterceptor)
+        add(room)
+        add(roomKtx)
         add(systemUiController)
         add(animationNavigation)
         add(constraintLayout)
@@ -75,6 +82,11 @@ object AppDependencies {
     val kaptLibraries = arrayListOf<String>().apply {
         add(hiltAndroidCompiler)
         add(hiltCompiler)
+        add(roomCompiler)
+    }
+
+    val annotationProcessors = arrayListOf<String>().apply {
+        add(roomCompiler)
     }
 
     val androidTestLibraries = arrayListOf<String>().apply {
@@ -97,6 +109,12 @@ fun DependencyHandler.kapt(list: List<String>) {
 fun DependencyHandler.implementation(list: List<String>) {
     list.forEach { dependency ->
         add("implementation", dependency)
+    }
+}
+
+fun DependencyHandler.annotationProcessor(list: List<String>) {
+    list.forEach { dependency ->
+        add("annotationProcessor", dependency)
     }
 }
 

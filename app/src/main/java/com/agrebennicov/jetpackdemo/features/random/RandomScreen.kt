@@ -28,6 +28,7 @@ fun RandomScreen(
     modifier: Modifier = Modifier,
     state: State<RandomState>,
     onSaveClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     onShareClick: () -> Unit,
     onNextJokeClick: () -> Unit,
     onTryAgainButtonClick: () -> Unit
@@ -51,13 +52,16 @@ fun RandomScreen(
                 val loadedNextJokeSuccessfully =
                     initialState.isLoadingNextJoke && !targetState.showError
                 val isLoadingNextJoke = targetState.isLoadingNextJoke
+                val saved = initialState.isSavingJoke || initialState.isDeletingJoke || targetState.isSavingJoke || targetState.isDeletingJoke
 
                 when {
-                    loadedNextJokeSuccessfully || isLoadingNextJoke -> {
+                    loadedNextJokeSuccessfully || isLoadingNextJoke || saved -> {
                         getNonAnimatedContentTransform()
                     }
-                    else -> fadeIn(animationSpec = tween(350, delayMillis = 180)) with
-                            fadeOut(animationSpec = tween(180))
+                    else -> {
+                        fadeIn(animationSpec = tween(350, delayMillis = 180)) with
+                                fadeOut(animationSpec = tween(180))
+                    }
                 }
             }
         ) { state ->
@@ -68,7 +72,10 @@ fun RandomScreen(
                         modifier = modifier,
                         joke = state.joke,
                         isNextJokeLoading = state.isLoadingNextJoke,
+                        isSaving = state.isSavingJoke,
+                        isDeleting = state.isDeletingJoke,
                         onSaveClick = onSaveClick,
+                        onDeleteClick = onDeleteClick,
                         onShareClick = onShareClick,
                         onNextJokeClick = onNextJokeClick
                     )
@@ -87,7 +94,10 @@ private fun ShowContent(
     modifier: Modifier,
     joke: Joke,
     isNextJokeLoading: Boolean,
+    isSaving: Boolean,
+    isDeleting: Boolean,
     onSaveClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     onShareClick: () -> Unit,
     onNextJokeClick: () -> Unit
 ) {
@@ -110,11 +120,12 @@ private fun ShowContent(
                 modifier = Modifier
                     .weight(0.5f)
                     .wrapContentHeight(),
-                text = "Save",
+                text = stringResource(if (joke.isSaved) R.string.delete else R.string.save),
                 backGroundColor = MaterialTheme.colors.primaryVariant,
-                icon = R.drawable.ic_save_white,
-                onButtonClicked = onSaveClick,
-                enabled = !isNextJokeLoading
+                icon = if (joke.isSaved) R.drawable.ic_save_white_clicked else R.drawable.ic_save_white,
+                onButtonClicked = if (joke.isSaved) onDeleteClick else onSaveClick,
+                enabled = !isNextJokeLoading || isSaving || isDeleting,
+                isLoading = isSaving || isDeleting
             )
 
             Spacer(modifier = Modifier.size(16.dp))

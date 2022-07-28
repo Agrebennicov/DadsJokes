@@ -25,7 +25,8 @@ fun NavGraphBuilder.buildGraph(
         LaunchedEffect(key1 = Unit) { viewModel.onAction(RandomAction.LoadFirstJoke) }
         RandomScreen(
             state = viewModel.state,
-            onSaveClick = { },
+            onSaveClick = { viewModel.onAction(RandomAction.SaveJoke) },
+            onDeleteClick = { viewModel.onAction(RandomAction.DeleteJoke) },
             onShareClick = { },
             onNextJokeClick = { viewModel.onAction(RandomAction.LoadNextJoke) },
             onTryAgainButtonClick = { viewModel.onAction(RandomAction.LoadFirstJoke) }
