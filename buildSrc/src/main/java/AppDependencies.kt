@@ -85,10 +85,6 @@ object AppDependencies {
         add(roomCompiler)
     }
 
-    val annotationProcessors = arrayListOf<String>().apply {
-        add(roomCompiler)
-    }
-
     val androidTestLibraries = arrayListOf<String>().apply {
         add(extJUnit)
         add(espressoCore)
@@ -109,12 +105,6 @@ fun DependencyHandler.kapt(list: List<String>) {
 fun DependencyHandler.implementation(list: List<String>) {
     list.forEach { dependency ->
         add("implementation", dependency)
-    }
-}
-
-fun DependencyHandler.annotationProcessor(list: List<String>) {
-    list.forEach { dependency ->
-        add("annotationProcessor", dependency)
     }
 }
 

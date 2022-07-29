@@ -81,14 +81,10 @@ class RandomViewModel @Inject constructor(
     }
 
     private fun saveJoke(joke: Joke) {
-        viewModelScope.launch {
-            randomRepository.addJoke(joke).collect {}
-        }
+        viewModelScope.launch { randomRepository.addJoke(joke) }
     }
 
     private fun deleteJoke(joke: Joke) {
-        viewModelScope.launch {
-            randomRepository.deleteJoke(joke).collect {}
-        }
+        viewModelScope.launch { randomRepository.deleteJoke(joke) }
     }
 }

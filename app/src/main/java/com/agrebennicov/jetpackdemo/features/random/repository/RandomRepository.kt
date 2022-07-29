@@ -1,6 +1,5 @@
 package com.agrebennicov.jetpackdemo.features.random.repository
 
-import android.util.Log
 import com.agrebennicov.jetpackdemo.common.database.JokeDao
 import com.agrebennicov.jetpackdemo.common.di.IO
 import com.agrebennicov.jetpackdemo.common.pojo.Joke
@@ -10,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RandomRepository @Inject constructor(
@@ -23,18 +23,8 @@ class RandomRepository @Inject constructor(
             .flowOn(IO)
             .catch { emit(Result.failure(it)) }
 
-    suspend fun addJoke(joke: Joke): Flow<Result<Unit>> =
-        flow { emit(Result.success(jokeDao.addJoke(joke))) }
-            .flowOn(IO)
-            .catch { emit(Result.failure(it)) }
+    suspend fun addJoke(joke: Joke) = withContext(IO) { jokeDao.addJoke(joke) }
 
-    suspend fun deleteJoke(joke: Joke): Flow<Result<Unit>> =
-        flow { emit(Result.success(jokeDao.deleteJoke(joke))) }
-            .flowOn(IO)
-            .catch { emit(Result.failure(it)) }
+    suspend fun deleteJoke(joke: Joke) = withContext(IO) { jokeDao.deleteJoke(joke) }
 
-    fun getSavedJokes(): Flow<Result<List<Joke>>> =
-        flow { emit(Result.success(jokeDao.getJokes())) }
-            .flowOn(IO)
-            .catch { emit(Result.failure(it)) }
 }
