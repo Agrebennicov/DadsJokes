@@ -120,7 +120,8 @@ fun JokeCardPreview() {
         ) {
             JokeCard(
                 joke = Joke(
-                    "What do you call a fashionable lawn statue with an excellent sense of rhythmn?\nA metro-gnome",
+                    id = "0",
+                    content = "What do you call a fashionable lawn statue with an excellent sense of rhythmn?\nA metro-gnome",
                     isSaved = true,
                     isSelected = false
                 ),
@@ -139,17 +140,20 @@ fun JokeListPreview() {
             mutableStateOf(
                 listOf(
                     Joke(
-                        "Wha-gnome",
+                        id = "0",
+                        content = "Wha-gnome",
                         isSaved = true,
                         isSelected = false
                     ),
                     Joke(
-                        "What do you call a fashionable lawn statue with an excellent sense of rhythmn?\nA metro-gnome",
+                        id = "0",
+                        content = "What do you call a fashionable lawn statue with an excellent sense of rhythmn?\nA metro-gnome",
                         isSaved = true,
                         isSelected = false
                     ),
                     Joke(
-                        "What do you call a fashionable lawn statue with an excellent sense of rhythmn?\nA metro-gnome",
+                        id = "0",
+                        content = "What do you call a fashionable lawn statue with an excellent sense of rhythmn?\nA metro-gnome",
                         isSaved = true,
                         isSelected = false
                     )

@@ -13,7 +13,8 @@ sealed class RandomAction {
     object LoadFirstJoke : RandomAction()
     object LoadNextJoke : RandomAction()
     data class JokeLoaded(val joke: Joke) : RandomAction()
-    object SaveJoke : RandomAction()
+    data class SaveJoke(val joke: Joke) : RandomAction()
+    data class DeleteJoke(val joke: Joke) : RandomAction()
     object ShareJoke : RandomAction()
     object ShowError : RandomAction()
 }

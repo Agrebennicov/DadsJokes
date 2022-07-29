@@ -22,10 +22,10 @@ fun NavGraphBuilder.buildGraph(
 ) {
     composable(NavRoutes.RandomScreen.route) {
         val viewModel: RandomViewModel = hiltViewModel()
-        LaunchedEffect(key1 = Unit) { viewModel.onAction(RandomAction.LoadFirstJoke) }
         RandomScreen(
             state = viewModel.state,
-            onSaveClick = { },
+            onSaveClick = { viewModel.onAction(RandomAction.SaveJoke(it)) },
+            onDeleteClick = { viewModel.onAction(RandomAction.DeleteJoke(it)) },
             onShareClick = { },
             onNextJokeClick = { viewModel.onAction(RandomAction.LoadNextJoke) },
             onTryAgainButtonClick = { viewModel.onAction(RandomAction.LoadFirstJoke) }

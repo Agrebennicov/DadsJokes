@@ -17,6 +17,7 @@ object Versions {
     const val retrofit = "2.9.0"
     const val gsonConverter = "2.9.0"
     const val okHttpInterceptor = "4.10.0"
+    const val room = "2.4.3"
     const val accompanist = "0.24.13-rc"
     const val constraintLayout = "1.0.0-beta02"
 
