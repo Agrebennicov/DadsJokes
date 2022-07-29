@@ -2,6 +2,7 @@ package com.agrebennicov.jetpackdemo.common.di
 
 import com.agrebennicov.jetpackdemo.BuildConfig
 import com.agrebennicov.jetpackdemo.features.random.repository.RandomService
+import com.agrebennicov.jetpackdemo.features.search.repository.SearchService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,4 +54,8 @@ object NetworkModule {
     @Provides
     fun provideRandomService(retrofit: Retrofit): RandomService =
         retrofit.create(RandomService::class.java)
+
+    @Provides
+    fun provideSearchService(retrofit: Retrofit): SearchService =
+        retrofit.create(SearchService::class.java)
 }
