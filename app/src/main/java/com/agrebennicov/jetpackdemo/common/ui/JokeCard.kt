@@ -13,15 +13,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agrebennicov.jetpackdemo.R
 import com.agrebennicov.jetpackdemo.common.pojo.Joke
-import com.agrebennicov.jetpackdemo.common.theme.Background
 import com.agrebennicov.jetpackdemo.common.theme.JetpackDemoTheme
-import com.agrebennicov.jetpackdemo.common.theme.Surface
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -42,7 +41,8 @@ fun JokeCard(
                     onClick = { if (isSelectionActive) onSelect?.invoke(false) },
                     onLongClick = { if (!isSelectionActive) onSelect?.invoke(true) }
                 ),
-            backgroundColor = if (joke.isSelected) Surface else Background
+            backgroundColor = if (joke.isSelected) MaterialTheme.colors.surface else
+                MaterialTheme.colors.background
         ) {
             Column(
                 modifier = Modifier
@@ -52,7 +52,7 @@ fun JokeCard(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = joke.content,
+                    text = joke.content.trim(),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.body1
                 )
@@ -89,6 +89,7 @@ fun JokeCard(
                                     .size(24.dp)
                                     .clickable { onShareClicked?.invoke() },
                                 painter = painterResource(R.drawable.ic_share_accent),
+                                colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
                                 contentDescription = "Share"
                             )
                             Spacer(modifier = Modifier.width(24.dp))
@@ -99,6 +100,7 @@ fun JokeCard(
                                     .size(24.dp)
                                     .clickable { onSaveClicked?.invoke() },
                                 painter = painterResource(saveIcon),
+                                colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
                                 contentDescription = "Save"
                             )
                         }
