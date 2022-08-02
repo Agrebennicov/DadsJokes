@@ -1,14 +1,10 @@
 package com.agrebennicov.jetpackdemo.features.random
 
 import android.annotation.SuppressLint
-import android.util.Log
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
@@ -20,6 +16,7 @@ import com.agrebennicov.jetpackdemo.common.ui.CommonButton
 import com.agrebennicov.jetpackdemo.common.ui.ErrorPlaceholder
 import com.agrebennicov.jetpackdemo.common.ui.JokeCard
 import com.agrebennicov.jetpackdemo.common.ui.Loader
+import com.agrebennicov.jetpackdemo.common.util.getAppDefaultAnimation
 import com.agrebennicov.jetpackdemo.common.util.getNonAnimatedContentTransform
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -34,59 +31,46 @@ fun RandomScreen(
     onNextJokeClick: () -> Unit,
     onTryAgainButtonClick: () -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                contentPadding = PaddingValues(start = 16.dp),
-                elevation = 16.dp
-            ) {
-                Text(
-                    style = MaterialTheme.typography.h1,
-                    text = "Random Joke"
-                )
+    AnimatedContent(
+        targetState = state.value,
+        transitionSpec = {
+            val loadedNextJokeSuccessfully = initialState.isLoadingNextJoke &&
+                    !targetState.showError
+            val isLoadingNextJoke = targetState.isLoadingNextJoke
+            val saved = initialState.joke != null &&
+                    !initialState.joke!!.isSaved &&
+                    targetState.joke != null &&
+                    targetState.joke!!.isSaved
+            val deleted = initialState.joke != null &&
+                    initialState.joke!!.isSaved &&
+                    targetState.joke != null &&
+                    !targetState.joke!!.isSaved
+
+            when {
+                loadedNextJokeSuccessfully || isLoadingNextJoke || saved || deleted -> {
+                    getNonAnimatedContentTransform()
+                }
+                else -> getAppDefaultAnimation()
             }
         }
-    ) {
-        AnimatedContent(
-            targetState = state.value,
-            transitionSpec = {
-                val loadedNextJokeSuccessfully =
-                    initialState.isLoadingNextJoke && !targetState.showError
-                val isLoadingNextJoke = targetState.isLoadingNextJoke
-                val saved =
-                    initialState.joke != null && !initialState.joke!!.isSaved && targetState.joke!!.isSaved
-                val deleted =
-                    initialState.joke != null && initialState.joke!!.isSaved && !targetState.joke!!.isSaved
-
-                when {
-                    loadedNextJokeSuccessfully || isLoadingNextJoke || saved || deleted -> {
-                        getNonAnimatedContentTransform()
-                    }
-                    else -> {
-                        fadeIn(animationSpec = tween(350, delayMillis = 180)) with
-                                fadeOut(animationSpec = tween(180))
-                    }
-                }
-            }
-        ) { state ->
-            when {
-                state.isLoadingFirstJoke -> ShowLoading(modifier = modifier)
-                state.joke != null -> {
-                    ShowContent(
-                        modifier = modifier,
-                        joke = state.joke,
-                        isNextJokeLoading = state.isLoadingNextJoke,
-                        onSaveClick = onSaveClick,
-                        onDeleteClick = onDeleteClick,
-                        onShareClick = onShareClick,
-                        onNextJokeClick = onNextJokeClick
-                    )
-                }
-                state.showError -> ShowError(
+    ) { targetState ->
+        when {
+            targetState.isLoadingFirstJoke -> ShowLoading(modifier = modifier)
+            targetState.joke != null -> {
+                ShowContent(
                     modifier = modifier,
-                    onTryAgainButtonClick = onTryAgainButtonClick
+                    joke = targetState.joke,
+                    isNextJokeLoading = targetState.isLoadingNextJoke,
+                    onSaveClick = onSaveClick,
+                    onDeleteClick = onDeleteClick,
+                    onShareClick = onShareClick,
+                    onNextJokeClick = onNextJokeClick
                 )
             }
+            targetState.showError -> ShowError(
+                modifier = modifier,
+                onTryAgainButtonClick = onTryAgainButtonClick
+            )
         }
     }
 }

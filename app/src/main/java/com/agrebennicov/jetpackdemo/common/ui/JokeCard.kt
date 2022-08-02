@@ -3,7 +3,9 @@ package com.agrebennicov.jetpackdemo.common.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Card
@@ -37,7 +39,7 @@ fun JokeCard(
         Card(
             elevation = 16.dp,
             modifier = modifier
-                .combinedClickable(
+                .noRippleCombinedClickable(
                     onClick = { if (isSelectionActive) onSelect?.invoke(false) },
                     onLongClick = { if (!isSelectionActive) onSelect?.invoke(true) }
                 ),
@@ -87,7 +89,7 @@ fun JokeCard(
                             Image(
                                 modifier = Modifier
                                     .size(24.dp)
-                                    .clickable { onShareClicked?.invoke() },
+                                    .noRippleClickable { onShareClicked?.invoke() },
                                 painter = painterResource(R.drawable.ic_share_accent),
                                 colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
                                 contentDescription = "Share"
@@ -98,7 +100,7 @@ fun JokeCard(
                             Image(
                                 modifier = Modifier
                                     .size(24.dp)
-                                    .clickable { onSaveClicked?.invoke() },
+                                    .noRippleClickable { onSaveClicked?.invoke() },
                                 painter = painterResource(saveIcon),
                                 colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
                                 contentDescription = "Save"

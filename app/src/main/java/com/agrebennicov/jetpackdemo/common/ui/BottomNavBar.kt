@@ -22,13 +22,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.agrebennicov.jetpackdemo.R
 import com.agrebennicov.jetpackdemo.common.theme.JetpackDemoTheme
+import com.agrebennicov.jetpackdemo.navigation.main.NavRoutes
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun BottomNavBar(
     modifier: Modifier = Modifier,
     items: List<BottomNavItem>,
-    onItemSelected: (String) -> Unit
+    onItemSelected: (NavRoutes) -> Unit
 ) {
     var selectedIndex by remember { mutableStateOf(0) }
 
@@ -54,7 +55,7 @@ fun BottomNavBar(
                                     .size(24.dp)
                                     .align(Alignment.Center),
                                 painter = painterResource(id = icon),
-                                contentDescription = state.route
+                                contentDescription = state.route.route
                             )
                         }
                     }
@@ -109,25 +110,25 @@ fun BottomNavBar(
 fun BottomNavBarPreview() {
     val bottomNavItems = listOf(
         BottomNavItem(
-            route = "Random",
+            route = NavRoutes.RandomScreen,
             selectedImage = R.drawable.ic_shuffle_white_clicked,
             unSelectedImage = R.drawable.ic_shuffle_white,
             isSelected = true
         ),
         BottomNavItem(
-            route = "Search",
+            route = NavRoutes.SearchScreen,
             selectedImage = R.drawable.ic_search_clicked,
             unSelectedImage = R.drawable.ic_search_white,
             isSelected = false
         ),
         BottomNavItem(
-            route = "Image",
+            route = NavRoutes.RandomImageScreen,
             selectedImage = R.drawable.ic_image_clicked,
             unSelectedImage = R.drawable.ic_image,
             isSelected = false
         ),
         BottomNavItem(
-            route = "Saved",
+            route = NavRoutes.SavedScreen,
             selectedImage = R.drawable.ic_save_white_clicked,
             unSelectedImage = R.drawable.ic_save_white,
             isSelected = false
@@ -152,7 +153,7 @@ fun BottomNavBarPreview() {
 }
 
 data class BottomNavItem(
-    val route: String,
+    val route: NavRoutes,
     @DrawableRes
     val selectedImage: Int,
     @DrawableRes

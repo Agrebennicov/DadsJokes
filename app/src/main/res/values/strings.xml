@@ -4,4 +4,8 @@
     <string name="common_error">Dad is tired :(\nPlease try again another time</string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
+    <string name="random_joke">Random Joke</string>
+    <string name="search">Search</string>
+    <string name="random_image_joke">Random Image Joke</string>
+    <string name="saved">Saved Jokes</string>
 </resources>

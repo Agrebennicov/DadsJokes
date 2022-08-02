@@ -3,10 +3,6 @@ package com.agrebennicov.jetpackdemo.features.search
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
@@ -30,39 +26,25 @@ fun SearchScreen(
     onClearButtonClick: () -> Unit,
     onTryAgainButtonClick: () -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                contentPadding = PaddingValues(start = 16.dp),
-                elevation = 16.dp
-            ) {
-                Text(
-                    style = MaterialTheme.typography.h1,
-                    text = "Search"
-                )
-            }
-        }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
-            if (state.value.isError) {
-                ShowError(
-                    modifier = Modifier,
-                    onTryAgainButtonClick = onTryAgainButtonClick
-                )
-            } else {
-                ShowContent(
-                    state,
-                    onQueryChanged,
-                    onSearchClicked,
-                    onJokeSaved,
-                    onJokeUnsaved,
-                    onClearButtonClick,
-                )
-            }
+        if (state.value.isError) {
+            ShowError(
+                modifier = Modifier,
+                onTryAgainButtonClick = onTryAgainButtonClick
+            )
+        } else {
+            ShowContent(
+                state,
+                onQueryChanged,
+                onSearchClicked,
+                onJokeSaved,
+                onJokeUnsaved,
+                onClearButtonClick,
+            )
         }
     }
 }
@@ -78,6 +60,7 @@ private fun ShowContent(
 ) {
     SearchView(
         modifier = Modifier
+            .padding(vertical = 16.dp)
             .fillMaxWidth()
             .wrapContentSize(),
         textValue = state.value.query,

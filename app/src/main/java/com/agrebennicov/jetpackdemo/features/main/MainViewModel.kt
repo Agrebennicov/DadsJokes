@@ -18,7 +18,10 @@ class MainViewModel @Inject constructor() : BaseViewModel<MainAction, MainState>
                 val updatedItems = mutableState.value.items.map {
                     it.copy(isSelected = it.route == action.newRoute)
                 }
-                mutableState.value.copy(items = updatedItems)
+                mutableState.value.copy(
+                    route = action.newRoute,
+                    items = updatedItems
+                )
             }
         }
     }
