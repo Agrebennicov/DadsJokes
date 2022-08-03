@@ -77,12 +77,12 @@ fun BottomNavBar(
     ) {
 
         val indicatorPosition by transition.animateDp(label = "bottomIndicatorTransitionDp") { state ->
-            maxWidth.div(4).times(state)
+            maxWidth.div(3).times(state)
         }
 
         Box(
             modifier = Modifier
-                .width(maxWidth.div(4))
+                .width(maxWidth.div(3))
                 .height(3.dp)
                 .offset(x = indicatorPosition)
         ) {
@@ -119,12 +119,6 @@ fun BottomNavBarPreview() {
             route = NavRoutes.SearchScreen,
             selectedImage = R.drawable.ic_search_clicked,
             unSelectedImage = R.drawable.ic_search_white,
-            isSelected = false
-        ),
-        BottomNavItem(
-            route = NavRoutes.RandomImageScreen,
-            selectedImage = R.drawable.ic_image_clicked,
-            unSelectedImage = R.drawable.ic_image,
             isSelected = false
         ),
         BottomNavItem(

@@ -37,7 +37,6 @@ fun JokeCard(
 ) {
     key(joke.content) {
         Card(
-            elevation = 16.dp,
             modifier = modifier
                 .noRippleCombinedClickable(
                     onClick = { if (isSelectionActive) onSelect?.invoke(false) },

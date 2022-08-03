@@ -1,4 +1,4 @@
-package com.agrebennicov.jetpackdemo.features.search
+package com.agrebennicov.jetpackdemo.features.search.searchView
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,8 +37,7 @@ fun SearchView(
             color = MaterialTheme.colors.background,
             shape = RoundedCornerShape(15.dp)
         ),
-        shape = RoundedCornerShape(15.dp),
-        elevation = 16.dp
+        shape = RoundedCornerShape(15.dp)
     ) {
         TextField(
             modifier = Modifier.fillMaxWidth(),
