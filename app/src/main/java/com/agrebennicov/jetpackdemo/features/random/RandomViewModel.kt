@@ -2,7 +2,9 @@ package com.agrebennicov.jetpackdemo.features.random
 
 import androidx.lifecycle.viewModelScope
 import com.agrebennicov.jetpackdemo.common.BaseViewModel
+import com.agrebennicov.jetpackdemo.common.di.BASE_URL
 import com.agrebennicov.jetpackdemo.common.pojo.Joke
+import com.agrebennicov.jetpackdemo.common.util.DownloadManager
 import com.agrebennicov.jetpackdemo.features.random.repository.RandomRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -10,12 +12,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RandomViewModel @Inject constructor(
-    private val randomRepository: RandomRepository
+    private val randomRepository: RandomRepository,
+    private val downloadManager: DownloadManager
 ) : BaseViewModel<RandomAction, RandomState>(RandomState(isLoadingFirstJoke = true)) {
 
     init {
         onAction(RandomAction.LoadFirstJoke)
     }
+
 
     override fun onAction(action: RandomAction) {
         when (action) {
@@ -35,7 +39,13 @@ class RandomViewModel @Inject constructor(
                 mutableState.value = reduce(action, mutableState.value)
                 deleteJoke(action.joke)
             }
+            is RandomAction.DownloadJoke -> {
+                mutableState.value = reduce(action, mutableState.value)
+                downloadJoke(action.joke)
+            }
             is RandomAction.JokeLoaded,
+            RandomAction.DownloadAnimationFinished,
+            RandomAction.DownloadSuccess,
             RandomAction.ShowError -> mutableState.value = reduce(action, mutableState.value)
             else -> throw IllegalStateException("TODO Soon")
         }
@@ -49,9 +59,7 @@ class RandomViewModel @Inject constructor(
                 isLoadingNextJoke = false,
                 showError = false
             )
-            RandomAction.LoadFirstJoke -> oldState.copy(
-                isLoadingFirstJoke = true
-            )
+            RandomAction.LoadFirstJoke -> oldState.copy(isLoadingFirstJoke = true)
             RandomAction.LoadNextJoke -> oldState.copy(isLoadingNextJoke = true)
             is RandomAction.SaveJoke -> oldState.copy(joke = action.joke.copy(isSaved = true))
             is RandomAction.DeleteJoke -> oldState.copy(joke = action.joke.copy(isSaved = false))
@@ -60,11 +68,18 @@ class RandomViewModel @Inject constructor(
                 joke = null,
                 isLoadingFirstJoke = false,
                 isLoadingNextJoke = false,
+                isDownloading = false,
+                showDownloadConfirmation = false
+            )
+            is RandomAction.DownloadJoke -> oldState.copy(isDownloading = true)
+            RandomAction.DownloadAnimationFinished -> oldState.copy(showDownloadConfirmation = false)
+            RandomAction.DownloadSuccess -> oldState.copy(
+                showDownloadConfirmation = true,
+                isDownloading = false
             )
             else -> throw IllegalStateException("TODO Soon")
         }
     }
-
 
     private fun fetchJoke() {
         viewModelScope.launch {
@@ -86,5 +101,15 @@ class RandomViewModel @Inject constructor(
 
     private fun deleteJoke(joke: Joke) {
         viewModelScope.launch { randomRepository.deleteJoke(joke) }
+    }
+
+    private fun downloadJoke(joke: Joke) {
+        viewModelScope.launch {
+            downloadManager.downloadImage(
+                "${BASE_URL}j/${joke.id}.png",
+                onDownloaded = { onAction(RandomAction.DownloadSuccess) },
+                onError = { onAction(RandomAction.ShowError) }
+            )
+        }
     }
 }

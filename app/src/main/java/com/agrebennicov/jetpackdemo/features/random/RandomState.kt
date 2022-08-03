@@ -6,7 +6,9 @@ data class RandomState(
     val isLoadingFirstJoke: Boolean = false,
     val isLoadingNextJoke: Boolean = false,
     val joke: Joke? = null,
-    val showError: Boolean = false
+    val showError: Boolean = false,
+    val showDownloadConfirmation: Boolean = false,
+    val isDownloading: Boolean = false
 )
 
 sealed class RandomAction {
@@ -17,4 +19,7 @@ sealed class RandomAction {
     data class DeleteJoke(val joke: Joke) : RandomAction()
     object ShareJoke : RandomAction()
     object ShowError : RandomAction()
+    data class DownloadJoke(val joke: Joke) : RandomAction()
+    object DownloadAnimationFinished : RandomAction()
+    object DownloadSuccess : RandomAction()
 }

@@ -14,7 +14,7 @@ import okhttp3.logging.HttpLoggingInterceptor.Level.NONE
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-private const val BASE_URL = "https://icanhazdadjoke.com/"
+const val BASE_URL = "https://icanhazdadjoke.com/"
 private const val GIT_LINK = "https://github.com/Agrebennicov/DadsJokes"
 private const val USER_AGENT = "User-Agent"
 private const val CONTENT_TYPE = "Accept"

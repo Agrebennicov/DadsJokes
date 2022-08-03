@@ -15,6 +15,7 @@ import com.agrebennicov.jetpackdemo.features.random.RandomViewModel
 import com.agrebennicov.jetpackdemo.features.search.SearchAction
 import com.agrebennicov.jetpackdemo.features.search.SearchScreen
 import com.agrebennicov.jetpackdemo.features.search.SearchViewModel
+import com.agrebennicov.jetpackdemo.features.search.searchView.ScrollableSearchViewModel
 import com.google.accompanist.navigation.animation.composable
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -30,29 +31,26 @@ fun NavGraphBuilder.buildGraph(
             onDeleteClick = { viewModel.onAction(RandomAction.DeleteJoke(it)) },
             onShareClick = { },
             onNextJokeClick = { viewModel.onAction(RandomAction.LoadNextJoke) },
-            onTryAgainButtonClick = { viewModel.onAction(RandomAction.LoadFirstJoke) }
+            onTryAgainButtonClick = { viewModel.onAction(RandomAction.LoadFirstJoke) },
+            onDownloadClicked = { viewModel.onAction(RandomAction.DownloadJoke(it)) },
+            onDownloadAnimationFinished = { viewModel.onAction(RandomAction.DownloadAnimationFinished) }
         )
     }
 
     composable(NavRoutes.SearchScreen.route) {
         val viewModel: SearchViewModel = hiltViewModel()
+        val scrollViewModel: ScrollableSearchViewModel = hiltViewModel()
         SearchScreen(
             state = viewModel.state,
+            scrollUpState = scrollViewModel.scrollUpState,
             onQueryChanged = { viewModel.onAction(SearchAction.QueryChanged(it)) },
             onSearchClicked = { viewModel.onAction(SearchAction.Search(it)) },
             onJokeSaved = { viewModel.onAction(SearchAction.JokeSaved(it)) },
             onJokeUnsaved = { viewModel.onAction(SearchAction.JokeUnSaved(it)) },
             onClearButtonClick = { viewModel.onAction(SearchAction.QueryChanged("")) },
-            onTryAgainButtonClick = { viewModel.onAction(SearchAction.QueryChanged("")) }
+            onTryAgainButtonClick = { viewModel.onAction(SearchAction.QueryChanged("")) },
+            onFirstVisibleItemChanged = { scrollViewModel.updateScrollPosition(it) }
         )
-    }
-
-    composable(NavRoutes.RandomImageScreen.route) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Text(
-                modifier = Modifier.align(Alignment.Center), text = "Random Image"
-            )
-        }
     }
 
     composable(NavRoutes.SavedScreen.route) {

@@ -1,9 +1,10 @@
 package com.agrebennicov.jetpackdemo.features.random
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -29,8 +30,18 @@ fun RandomScreen(
     onDeleteClick: (Joke) -> Unit,
     onShareClick: () -> Unit,
     onNextJokeClick: () -> Unit,
-    onTryAgainButtonClick: () -> Unit
+    onTryAgainButtonClick: () -> Unit,
+    onDownloadClicked: (Joke) -> Unit,
+    onDownloadAnimationFinished: () -> Unit
 ) {
+    AnimatedVisibility(
+        visible = state.value.showDownloadConfirmation,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        DownloadConfirmation(onAnimationFinished = onDownloadAnimationFinished)
+    }
+
     AnimatedContent(
         targetState = state.value,
         transitionSpec = {
@@ -45,11 +56,17 @@ fun RandomScreen(
                     initialState.joke!!.isSaved &&
                     targetState.joke != null &&
                     !targetState.joke!!.isSaved
+            val isDownloading = initialState.isDownloading || targetState.isDownloading
+            val showHideDownloadConfirmation = targetState.showDownloadConfirmation ||
+                    (initialState.showDownloadConfirmation && !targetState.showDownloadConfirmation)
 
             when {
-                loadedNextJokeSuccessfully || isLoadingNextJoke || saved || deleted -> {
-                    getNonAnimatedContentTransform()
-                }
+                loadedNextJokeSuccessfully ||
+                        isLoadingNextJoke ||
+                        saved ||
+                        deleted ||
+                        isDownloading ||
+                        showHideDownloadConfirmation -> getNonAnimatedContentTransform()
                 else -> getAppDefaultAnimation()
             }
         }
@@ -64,7 +81,10 @@ fun RandomScreen(
                     onSaveClick = onSaveClick,
                     onDeleteClick = onDeleteClick,
                     onShareClick = onShareClick,
-                    onNextJokeClick = onNextJokeClick
+                    onNextJokeClick = onNextJokeClick,
+                    onDownloadClicked = onDownloadClicked,
+                    isShowingDownload = targetState.showDownloadConfirmation,
+                    isDownloading = targetState.isDownloading
                 )
             }
             targetState.showError -> ShowError(
@@ -83,21 +103,42 @@ private fun ShowContent(
     onSaveClick: (Joke) -> Unit,
     onDeleteClick: (Joke) -> Unit,
     onShareClick: () -> Unit,
-    onNextJokeClick: () -> Unit
+    onNextJokeClick: () -> Unit,
+    onDownloadClicked: (Joke) -> Unit,
+    isShowingDownload: Boolean,
+    isDownloading: Boolean
 ) {
+    val scrollState = rememberScrollState()
+    val areButtonEnabled = !isNextJokeLoading && !isShowingDownload && !isDownloading
+
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(horizontal = 16.dp)
     ) {
-        Spacer(modifier = Modifier.fillMaxSize(0.1f))
         JokeCard(
+            Modifier.padding(top = 16.dp),
             joke = joke,
             actionsEnabled = false,
             isSelectionActive = false
         )
 
         Spacer(modifier = Modifier.weight(1f))
+
+        CommonButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            text = "Download",
+            backGroundColor = MaterialTheme.colors.primaryVariant,
+            icon = R.drawable.ic_download,
+            onButtonClicked = { onDownloadClicked(joke) },
+            isLoading = isDownloading,
+            enabled = areButtonEnabled
+        )
+
+        Spacer(modifier = Modifier.size(16.dp))
 
         Row {
             CommonButton(
@@ -112,7 +153,7 @@ private fun ShowContent(
                 } else {
                     { onSaveClick(joke) }
                 },
-                enabled = !isNextJokeLoading
+                enabled = areButtonEnabled
             )
 
             Spacer(modifier = Modifier.size(16.dp))
@@ -125,7 +166,7 @@ private fun ShowContent(
                 backGroundColor = MaterialTheme.colors.primaryVariant,
                 icon = R.drawable.ic_share_white,
                 onButtonClicked = onShareClick,
-                enabled = !isNextJokeLoading
+                enabled = areButtonEnabled
             )
         }
 
@@ -139,7 +180,7 @@ private fun ShowContent(
             backGroundColor = MaterialTheme.colors.primaryVariant,
             icon = R.drawable.ic_next,
             onButtonClicked = onNextJokeClick,
-            enabled = !isNextJokeLoading,
+            enabled = areButtonEnabled,
             isLoading = isNextJokeLoading
         )
 

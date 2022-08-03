@@ -20,12 +20,6 @@ data class MainState(
             isSelected = false
         ),
         BottomNavItem(
-            route = NavRoutes.RandomImageScreen,
-            selectedImage = R.drawable.ic_image_clicked,
-            unSelectedImage = R.drawable.ic_image,
-            isSelected = false
-        ),
-        BottomNavItem(
             route = NavRoutes.SavedScreen,
             selectedImage = R.drawable.ic_save_white_clicked,
             unSelectedImage = R.drawable.ic_save_white,
