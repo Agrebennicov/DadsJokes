@@ -10,22 +10,21 @@ data class Joke(
     @PrimaryKey
     val id: String,
     val content: String,
-    @Ignore
     val isSaved: Boolean,
     @Ignore
     val isSelected: Boolean
 ) {
-    constructor(id: String, content: String) : this(
+    constructor(id: String, content: String, isSaved: Boolean) : this(
         id,
         content,
-        false,
+        isSaved,
         false
     )
 
-    constructor(jokeResponse: JokeResponse) : this(
+    constructor(jokeResponse: JokeResponse, isSaved: Boolean) : this(
         jokeResponse.id,
         jokeResponse.content,
-        false,
+        isSaved,
         false
     )
 }

@@ -5,6 +5,7 @@ import com.agrebennicov.jetpackdemo.common.BaseViewModel
 import com.agrebennicov.jetpackdemo.common.di.BASE_URL
 import com.agrebennicov.jetpackdemo.common.pojo.Joke
 import com.agrebennicov.jetpackdemo.common.util.DownloadManager
+import com.agrebennicov.jetpackdemo.common.util.ShareUtil
 import com.agrebennicov.jetpackdemo.features.random.repository.RandomRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -13,13 +14,13 @@ import javax.inject.Inject
 @HiltViewModel
 class RandomViewModel @Inject constructor(
     private val randomRepository: RandomRepository,
-    private val downloadManager: DownloadManager
+    private val downloadManager: DownloadManager,
+    private val shareUtil: ShareUtil,
 ) : BaseViewModel<RandomAction, RandomState>(RandomState(isLoadingFirstJoke = true)) {
 
     init {
         onAction(RandomAction.LoadFirstJoke)
     }
-
 
     override fun onAction(action: RandomAction) {
         when (action) {
@@ -43,11 +44,31 @@ class RandomViewModel @Inject constructor(
                 mutableState.value = reduce(action, mutableState.value)
                 downloadJoke(action.joke)
             }
+            is RandomAction.ShareJoke -> {
+                mutableState.value = reduce(action, mutableState.value)
+                shareUtil.share(action.context, action.joke)
+            }
+            RandomAction.Refresh -> {
+                mutableState.value = reduce(action, mutableState.value)
+                refreshJokeIfNeeded()
+            }
             is RandomAction.JokeLoaded,
             RandomAction.DownloadAnimationFinished,
             RandomAction.DownloadSuccess,
             RandomAction.ShowError -> mutableState.value = reduce(action, mutableState.value)
-            else -> throw IllegalStateException("TODO Soon")
+        }
+    }
+
+    private fun refreshJokeIfNeeded() {
+        viewModelScope.launch {
+            state.value.joke?.let {
+                val localJoke = randomRepository.getJoke(it.id)
+                when {
+                    localJoke == it -> return@launch
+                    localJoke != null -> onAction(RandomAction.JokeLoaded(it.copy(isSaved = true)))
+                    else -> onAction(RandomAction.JokeLoaded(it.copy(isSaved = false)))
+                }
+            }
         }
     }
 
@@ -77,18 +98,17 @@ class RandomViewModel @Inject constructor(
                 showDownloadConfirmation = true,
                 isDownloading = false
             )
-            else -> throw IllegalStateException("TODO Soon")
+            is RandomAction.ShareJoke,
+            RandomAction.Refresh -> oldState
         }
     }
 
     private fun fetchJoke() {
         viewModelScope.launch {
             randomRepository.fetchRandomJoke().collect {
-                val jokeResponse = it.getOrNull()
+                val joke = it.getOrNull()
                 when {
-                    it.isSuccess && jokeResponse != null -> {
-                        onAction(RandomAction.JokeLoaded(Joke(jokeResponse)))
-                    }
+                    it.isSuccess && joke != null -> onAction(RandomAction.JokeLoaded(joke))
                     else -> onAction(RandomAction.ShowError)
                 }
             }
@@ -96,7 +116,7 @@ class RandomViewModel @Inject constructor(
     }
 
     private fun saveJoke(joke: Joke) {
-        viewModelScope.launch { randomRepository.addJoke(joke) }
+        viewModelScope.launch { randomRepository.addJoke(joke.copy(isSaved = true)) }
     }
 
     private fun deleteJoke(joke: Joke) {

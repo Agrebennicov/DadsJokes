@@ -1,5 +1,6 @@
 package com.agrebennicov.jetpackdemo.features.random
 
+import android.content.Context
 import com.agrebennicov.jetpackdemo.common.pojo.Joke
 
 data class RandomState(
@@ -17,9 +18,10 @@ sealed class RandomAction {
     data class JokeLoaded(val joke: Joke) : RandomAction()
     data class SaveJoke(val joke: Joke) : RandomAction()
     data class DeleteJoke(val joke: Joke) : RandomAction()
-    object ShareJoke : RandomAction()
+    data class ShareJoke(val context: Context, val joke: Joke) : RandomAction()
     object ShowError : RandomAction()
     data class DownloadJoke(val joke: Joke) : RandomAction()
     object DownloadAnimationFinished : RandomAction()
     object DownloadSuccess : RandomAction()
+    object Refresh : RandomAction()
 }

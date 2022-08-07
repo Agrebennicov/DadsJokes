@@ -4,8 +4,10 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -25,11 +27,17 @@ fun NavGraphBuilder.buildGraph(
 ) {
     composable(NavRoutes.RandomScreen.route) {
         val viewModel: RandomViewModel = hiltViewModel()
+        val context = LocalContext.current
+
+        LaunchedEffect(key1 = this) {
+            viewModel.onAction(RandomAction.Refresh)
+        }
+
         RandomScreen(
             state = viewModel.state,
             onSaveClick = { viewModel.onAction(RandomAction.SaveJoke(it)) },
             onDeleteClick = { viewModel.onAction(RandomAction.DeleteJoke(it)) },
-            onShareClick = { },
+            onShareClick = { viewModel.onAction(RandomAction.ShareJoke(context, it)) },
             onNextJokeClick = { viewModel.onAction(RandomAction.LoadNextJoke) },
             onTryAgainButtonClick = { viewModel.onAction(RandomAction.LoadFirstJoke) },
             onDownloadClicked = { viewModel.onAction(RandomAction.DownloadJoke(it)) },
@@ -40,11 +48,19 @@ fun NavGraphBuilder.buildGraph(
     composable(NavRoutes.SearchScreen.route) {
         val viewModel: SearchViewModel = hiltViewModel()
         val scrollViewModel: ScrollableSearchViewModel = hiltViewModel()
+        val context = LocalContext.current
+
+
+        LaunchedEffect(key1 = this) {
+            viewModel.onAction(SearchAction.Refresh)
+        }
+
         SearchScreen(
             state = viewModel.state,
             scrollUpState = scrollViewModel.scrollUpState,
             onQueryChanged = { viewModel.onAction(SearchAction.QueryChanged(it)) },
             onSearchClicked = { viewModel.onAction(SearchAction.Search(it)) },
+            onShareClick = { viewModel.onAction(SearchAction.ShareJoke(context, it)) },
             onJokeSaved = { viewModel.onAction(SearchAction.JokeSaved(it)) },
             onJokeUnsaved = { viewModel.onAction(SearchAction.JokeUnSaved(it)) },
             onClearButtonClick = { viewModel.onAction(SearchAction.QueryChanged("")) },

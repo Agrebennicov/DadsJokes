@@ -10,11 +10,20 @@ import com.agrebennicov.jetpackdemo.common.pojo.Joke
 @Dao
 interface JokeDao {
     @Query("SELECT * FROM $JOKES_TABLE ORDER BY id ASC")
-    fun getJokes(): List<Joke>
+    fun getAllJokes(): List<Joke>
 
     @Insert(onConflict = IGNORE)
     fun addJoke(joke: Joke)
 
     @Delete
     fun deleteJoke(joke: Joke)
+
+    @Query("SELECT id FROM $JOKES_TABLE WHERE id IN (:ids)")
+    fun getStoredJokesIdsByIds(ids: List<String>): List<String>
+
+    @Query("SELECT id FROM $JOKES_TABLE WHERE id IS :id")
+    fun getStoredJokeIdById(id: String): String?
+
+    @Query("SELECT * FROM $JOKES_TABLE WHERE id IS :id")
+    fun getJokeById(id: String): Joke?
 }
