@@ -28,7 +28,7 @@ fun RandomScreen(
     state: State<RandomState>,
     onSaveClick: (Joke) -> Unit,
     onDeleteClick: (Joke) -> Unit,
-    onShareClick: () -> Unit,
+    onShareClick: (Joke) -> Unit,
     onNextJokeClick: () -> Unit,
     onTryAgainButtonClick: () -> Unit,
     onDownloadClicked: (Joke) -> Unit,
@@ -102,7 +102,7 @@ private fun ShowContent(
     isNextJokeLoading: Boolean,
     onSaveClick: (Joke) -> Unit,
     onDeleteClick: (Joke) -> Unit,
-    onShareClick: () -> Unit,
+    onShareClick: (Joke) -> Unit,
     onNextJokeClick: () -> Unit,
     onDownloadClicked: (Joke) -> Unit,
     isShowingDownload: Boolean,
@@ -165,7 +165,7 @@ private fun ShowContent(
                 text = "Share",
                 backGroundColor = MaterialTheme.colors.primaryVariant,
                 icon = R.drawable.ic_share_white,
-                onButtonClicked = onShareClick,
+                onButtonClicked = { onShareClick(joke) },
                 enabled = areButtonEnabled
             )
         }

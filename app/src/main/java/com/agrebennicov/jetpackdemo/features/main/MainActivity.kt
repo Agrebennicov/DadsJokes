@@ -18,10 +18,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.createGraph
+import com.agrebennicov.jetpackdemo.R
 import com.agrebennicov.jetpackdemo.common.theme.JetpackDemoTheme
 import com.agrebennicov.jetpackdemo.common.ui.BottomNavBar
 import com.agrebennicov.jetpackdemo.common.ui.NoRippleTheme
@@ -39,18 +38,23 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             JetpackDemoTheme {
-                val viewModel: MainViewModel = hiltViewModel()
                 val systemUiController = rememberSystemUiController()
                 val useDarkIcons = MaterialTheme.colors.isLight
                 val statusBarColor = MaterialTheme.colors.primaryVariant
                 val navController = rememberAnimatedNavController()
+                val currentRoute = navController.currentBackStackEntryAsState()
                 val mainGraph = navController.createGraph(
                     startDestination = NavRoutes.RandomScreen.route,
                     route = NavRoutes.GRAPH_ROUTE,
-                    builder = {
-                        buildGraph(navController = navController)
-                    }
+                    builder = { buildGraph(navController = navController) }
                 )
+
+                val toolbarTitle = when (currentRoute.value?.destination?.route) {
+                    NavRoutes.RandomScreen.route -> R.string.random_joke
+                    NavRoutes.SearchScreen.route -> R.string.search
+                    NavRoutes.SavedScreen.route -> R.string.saved
+                    else -> null
+                }
 
                 SideEffect {
                     systemUiController.setStatusBarColor(
@@ -65,24 +69,17 @@ class MainActivity : ComponentActivity() {
                             contentPadding = PaddingValues(start = 16.dp),
                             elevation = 16.dp
                         ) {
-                            Text(
-                                style = MaterialTheme.typography.h1,
-                                text = stringResource(id = viewModel.state.value.route.toolbarTitle)
-                            )
+                            toolbarTitle?.let {
+                                Text(
+                                    style = MaterialTheme.typography.h1,
+                                    text = stringResource(id = it)
+                                )
+                            }
                         }
                     },
                     bottomBar = {
                         CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
-                            BottomNavBar(
-                                items = viewModel.state.value.items,
-                                onItemSelected = {
-                                    handleBottomBarItemSelection(
-                                        navController = navController,
-                                        newRoute = it.route
-                                    )
-                                    viewModel.onAction(MainAction.TabChanged(it))
-                                },
-                            )
+                            BottomNavBar(navController = navController)
                         }
                     }
                 ) { paddingValues ->
@@ -96,14 +93,6 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
-        }
-    }
-
-    private fun handleBottomBarItemSelection(navController: NavController, newRoute: String) {
-        navController.navigate(newRoute) {
-            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-            launchSingleTop = true
-            restoreState = true
         }
     }
 }

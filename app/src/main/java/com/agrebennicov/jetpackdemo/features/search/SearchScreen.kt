@@ -27,6 +27,7 @@ fun SearchScreen(
     scrollUpState: State<Boolean>,
     onQueryChanged: (String) -> Unit,
     onSearchClicked: (String) -> Unit,
+    onShareClick: (Joke) -> Unit,
     onJokeSaved: (Joke) -> Unit,
     onJokeUnsaved: (Joke) -> Unit,
     onClearButtonClick: () -> Unit,
@@ -46,6 +47,7 @@ fun SearchScreen(
             onSearchClicked = onSearchClicked,
             onJokeSaved = onJokeSaved,
             onJokeUnsaved = onJokeUnsaved,
+            onShareClick = onShareClick,
             onClearButtonClick = onClearButtonClick,
             onFirstVisibleItemChanged = onFirstVisibleItemChanged
         )
@@ -60,6 +62,7 @@ private fun ShowContent(
     onSearchClicked: (String) -> Unit,
     onJokeSaved: (Joke) -> Unit,
     onJokeUnsaved: (Joke) -> Unit,
+    onShareClick: (Joke) -> Unit,
     onClearButtonClick: () -> Unit,
     onFirstVisibleItemChanged: (Int) -> Unit
 ) {
@@ -71,11 +74,13 @@ private fun ShowContent(
             .collect { onFirstVisibleItemChanged(it) }
     }
 
+    val alignment = if (state.value.showData) Alignment.TopCenter else Alignment.Center
+
     Box {
         LazyColumn(
             modifier = Modifier
                 .wrapContentSize()
-                .align(Alignment.Center),
+                .align(alignment),
             state = scrollState,
             contentPadding = PaddingValues(
                 top = 56.dp + 32.dp,
@@ -93,13 +98,13 @@ private fun ShowContent(
                                 count = state.value.jokes.size,
                                 key = { state.value.jokes[it].content },
                                 itemContent = {
+                                    val joke = state.value.jokes[it]
                                     JokeCard(
-                                        joke = state.value.jokes[it],
+                                        joke = joke,
                                         actionsEnabled = true,
                                         isSelectionActive = false,
-                                        onShareClicked = {},
+                                        onShareClicked = { onShareClick(joke) },
                                         onSaveClicked = {
-                                            val joke = state.value.jokes[it]
                                             if (state.value.jokes[it].isSaved) {
                                                 onJokeUnsaved(joke)
                                             } else {
@@ -116,6 +121,7 @@ private fun ShowContent(
                 }
             }
         )
+
         ScrollableSearchView(
             modifier = Modifier
                 .fillMaxWidth()

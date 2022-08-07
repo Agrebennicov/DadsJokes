@@ -20,35 +20,41 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.agrebennicov.jetpackdemo.R
 import com.agrebennicov.jetpackdemo.common.theme.JetpackDemoTheme
 import com.agrebennicov.jetpackdemo.navigation.main.NavRoutes
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun BottomNavBar(
     modifier: Modifier = Modifier,
-    items: List<BottomNavItem>,
-    onItemSelected: (NavRoutes) -> Unit
+    navController: NavHostController
 ) {
     var selectedIndex by remember { mutableStateOf(0) }
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
 
     BottomAppBar(
         modifier = modifier
             .background(color = MaterialTheme.colors.surface)
             .clip(shape = RoundedCornerShape(15.dp, 15.dp, 0.dp, 0.dp))
     ) {
-        items.forEachIndexed { index, item ->
+        BottomNavBarItems.items.forEachIndexed { index, item ->
+            val isSelected = currentRoute == item.route.route
             BottomNavigationItem(
                 icon = {
                     AnimatedContent(
                         modifier = Modifier.fillMaxSize(),
                         targetState = item
                     ) { state ->
-                        if (state.isSelected) selectedIndex = index
+                        if (isSelected) selectedIndex = index
                         Box(modifier = Modifier.fillMaxSize()) {
                             val icon =
-                                if (state.isSelected) state.selectedImage else state.unSelectedImage
+                                if (isSelected) state.selectedImage else state.unSelectedImage
                             Icon(
                                 modifier = Modifier
                                     .padding(16.dp)
@@ -60,8 +66,16 @@ fun BottomNavBar(
                         }
                     }
                 },
-                selected = item.isSelected,
-                onClick = { onItemSelected(item.route) }
+                selected = isSelected,
+                onClick = {
+                    navController.navigate(item.route.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
             )
         }
     }
@@ -105,30 +119,10 @@ fun BottomNavBar(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Preview
 @Composable
 fun BottomNavBarPreview() {
-    val bottomNavItems = listOf(
-        BottomNavItem(
-            route = NavRoutes.RandomScreen,
-            selectedImage = R.drawable.ic_shuffle_white_clicked,
-            unSelectedImage = R.drawable.ic_shuffle_white,
-            isSelected = true
-        ),
-        BottomNavItem(
-            route = NavRoutes.SearchScreen,
-            selectedImage = R.drawable.ic_search_clicked,
-            unSelectedImage = R.drawable.ic_search_white,
-            isSelected = false
-        ),
-        BottomNavItem(
-            route = NavRoutes.SavedScreen,
-            selectedImage = R.drawable.ic_save_white_clicked,
-            unSelectedImage = R.drawable.ic_save_white,
-            isSelected = false
-        )
-    )
-
     JetpackDemoTheme {
         Box(
             modifier = Modifier
@@ -139,8 +133,7 @@ fun BottomNavBarPreview() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter),
-                items = bottomNavItems,
-                onItemSelected = { }
+                navController = rememberAnimatedNavController()
             )
         }
     }
@@ -151,6 +144,25 @@ data class BottomNavItem(
     @DrawableRes
     val selectedImage: Int,
     @DrawableRes
-    val unSelectedImage: Int,
-    val isSelected: Boolean
+    val unSelectedImage: Int
 )
+
+object BottomNavBarItems {
+    val items = listOf(
+        BottomNavItem(
+            route = NavRoutes.RandomScreen,
+            selectedImage = R.drawable.ic_shuffle_white_clicked,
+            unSelectedImage = R.drawable.ic_shuffle_white
+        ),
+        BottomNavItem(
+            route = NavRoutes.SearchScreen,
+            selectedImage = R.drawable.ic_search_clicked,
+            unSelectedImage = R.drawable.ic_search_white
+        ),
+        BottomNavItem(
+            route = NavRoutes.SavedScreen,
+            selectedImage = R.drawable.ic_save_white_clicked,
+            unSelectedImage = R.drawable.ic_save_white
+        )
+    )
+}

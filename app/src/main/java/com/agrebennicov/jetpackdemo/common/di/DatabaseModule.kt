@@ -21,7 +21,9 @@ class DatabaseModule {
         context,
         JokesDb::class.java,
         JOKES_DATABASE
-    ).build()
+    )
+        .fallbackToDestructiveMigration()
+        .build()
 
     @Provides
     fun provideJokeDao(
