@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">JetpackDemo</string>
+    <string name="app_name">Dad Jokes</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="common_error">Dad is tired :(\nPlease try again another time</string>
     <string name="save">Save</string>

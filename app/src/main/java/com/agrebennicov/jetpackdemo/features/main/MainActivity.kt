@@ -14,7 +14,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -24,11 +23,12 @@ import com.agrebennicov.jetpackdemo.R
 import com.agrebennicov.jetpackdemo.common.theme.JetpackDemoTheme
 import com.agrebennicov.jetpackdemo.common.ui.BottomNavBar
 import com.agrebennicov.jetpackdemo.common.ui.NoRippleTheme
+import com.agrebennicov.jetpackdemo.navigation.main.BuildMainNavigation
+import com.agrebennicov.jetpackdemo.navigation.main.BuildSplashNavigation
+import com.agrebennicov.jetpackdemo.navigation.main.DestinationRoutes
 import com.agrebennicov.jetpackdemo.navigation.main.NavRoutes
-import com.agrebennicov.jetpackdemo.navigation.main.buildGraph
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -38,48 +38,69 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             JetpackDemoTheme {
-                val systemUiController = rememberSystemUiController()
-                val useDarkIcons = MaterialTheme.colors.isLight
-                val statusBarColor = MaterialTheme.colors.primaryVariant
                 val navController = rememberAnimatedNavController()
                 val currentRoute = navController.currentBackStackEntryAsState()
                 val mainGraph = navController.createGraph(
-                    startDestination = NavRoutes.RandomScreen.route,
-                    route = NavRoutes.GRAPH_ROUTE,
-                    builder = { buildGraph(navController = navController) }
+                    startDestination = DestinationRoutes.SplashDestination.route,
+                    route = NavRoutes.APP_GRAPH_ROUTE,
+                    builder = {
+                        BuildSplashNavigation(navController)
+                        BuildMainNavigation()
+                    }
                 )
 
-                val toolbarTitle = when (currentRoute.value?.destination?.route) {
-                    NavRoutes.RandomScreen.route -> R.string.random_joke
-                    NavRoutes.SearchScreen.route -> R.string.search
-                    NavRoutes.SavedScreen.route -> R.string.saved
-                    else -> null
-                }
-
-                SideEffect {
-                    systemUiController.setStatusBarColor(
-                        color = statusBarColor,
-                        darkIcons = useDarkIcons
-                    )
+                val toolbarTitle: Int?
+                val showBottomBar: Boolean
+                val showTopBar: Boolean
+                when (currentRoute.value?.destination?.route) {
+                    NavRoutes.SplashScreen.route -> {
+                        showTopBar = false
+                        showBottomBar = false
+                        toolbarTitle = null
+                    }
+                    NavRoutes.RandomScreen.route -> {
+                        showTopBar = true
+                        showBottomBar = true
+                        toolbarTitle = R.string.random_joke
+                    }
+                    NavRoutes.SearchScreen.route -> {
+                        showTopBar = true
+                        showBottomBar = true
+                        toolbarTitle = R.string.search
+                    }
+                    NavRoutes.SavedScreen.route -> {
+                        showTopBar = true
+                        showBottomBar = true
+                        toolbarTitle = R.string.saved
+                    }
+                    else -> {
+                        showTopBar = false
+                        showBottomBar = false
+                        toolbarTitle = null
+                    }
                 }
 
                 Scaffold(
                     topBar = {
-                        TopAppBar(
-                            contentPadding = PaddingValues(start = 16.dp),
-                            elevation = 16.dp
-                        ) {
-                            toolbarTitle?.let {
-                                Text(
-                                    style = MaterialTheme.typography.h1,
-                                    text = stringResource(id = it)
-                                )
+                        if (showTopBar) {
+                            TopAppBar(
+                                contentPadding = PaddingValues(start = 16.dp),
+                                elevation = 16.dp
+                            ) {
+                                toolbarTitle?.let {
+                                    Text(
+                                        style = MaterialTheme.typography.h1,
+                                        text = stringResource(id = it)
+                                    )
+                                }
                             }
                         }
                     },
                     bottomBar = {
-                        CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
-                            BottomNavBar(navController = navController)
+                        if (showBottomBar) {
+                            CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
+                                BottomNavBar(navController = navController)
+                            }
                         }
                     }
                 ) { paddingValues ->

@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.agrebennicov.jetpackdemo.R
@@ -69,7 +68,7 @@ fun BottomNavBar(
                 selected = isSelected,
                 onClick = {
                     navController.navigate(item.route.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
+                        popUpTo(NavRoutes.RandomScreen.route) {
                             saveState = true
                         }
                         launchSingleTop = true

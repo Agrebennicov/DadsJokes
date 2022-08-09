@@ -51,7 +51,8 @@ object AppDependencies {
     private const val constraintLayout =
         "androidx.constraintlayout:constraintlayout-compose:${Versions.constraintLayout}"
     private const val lottie = "com.airbnb.android:lottie-compose:${Versions.lottie}"
-
+    private const val vectorAnimation =
+        "androidx.compose.animation:animation-graphics:${Versions.vectorAnimation}"
 
     //test libs
     private const val junit = "junit:junit:${Versions.junit}"
@@ -80,6 +81,7 @@ object AppDependencies {
         add(animationNavigation)
         add(constraintLayout)
         add(lottie)
+        add(vectorAnimation)
     }
 
     val kaptLibraries = arrayListOf<String>().apply {

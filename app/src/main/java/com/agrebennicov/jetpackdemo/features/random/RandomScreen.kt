@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -19,6 +20,7 @@ import com.agrebennicov.jetpackdemo.common.ui.JokeCard
 import com.agrebennicov.jetpackdemo.common.ui.Loader
 import com.agrebennicov.jetpackdemo.common.util.getAppDefaultAnimation
 import com.agrebennicov.jetpackdemo.common.util.getNonAnimatedContentTransform
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -34,6 +36,17 @@ fun RandomScreen(
     onDownloadClicked: (Joke) -> Unit,
     onDownloadAnimationFinished: () -> Unit
 ) {
+    val statusBarColor = MaterialTheme.colors.primaryVariant
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = MaterialTheme.colors.isLight
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = statusBarColor,
+            darkIcons = useDarkIcons
+        )
+    }
+
     AnimatedVisibility(
         visible = state.value.showDownloadConfirmation,
         enter = fadeIn(),
