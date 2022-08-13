@@ -115,7 +115,14 @@ private fun ShowContent(
                                 }
                             )
                         } else {
-                            item { EmptyView(emptyText = "Sorry, there is nothing on\n\"${state.value.query}\"") }
+                            item {
+                                EmptyView(
+                                    emptyText = stringResource(
+                                        id = R.string.empty_search_result,
+                                        state.value.query
+                                    )
+                                )
+                            }
                         }
                     }
                 }

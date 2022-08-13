@@ -58,6 +58,7 @@ object AppDependencies {
     private const val junit = "junit:junit:${Versions.junit}"
     private const val extJUnit = "androidx.test.ext:junit:${Versions.extJunit}"
     private const val espressoCore = "androidx.test.espresso:espresso-core:${Versions.espresso}"
+    private const val testCore = "androidx.test:core-ktx:${Versions.testCore}"
 
     val appLibraries = arrayListOf<String>().apply {
         add(coreKtx)
@@ -93,10 +94,12 @@ object AppDependencies {
     val androidTestLibraries = arrayListOf<String>().apply {
         add(extJUnit)
         add(espressoCore)
+
     }
 
     val testLibraries = arrayListOf<String>().apply {
         add(junit)
+        add(testCore)
     }
 }
 

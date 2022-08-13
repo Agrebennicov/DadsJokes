@@ -25,37 +25,37 @@ class RandomViewModel @Inject constructor(
     override fun onAction(action: RandomAction) {
         when (action) {
             RandomAction.LoadFirstJoke -> {
-                mutableState.value = reduce(action, mutableState.value)
+                updateState(action)
                 fetchJoke()
             }
             is RandomAction.LoadNextJoke -> {
-                mutableState.value = reduce(action, mutableState.value)
+                updateState(action)
                 fetchJoke()
             }
             is RandomAction.SaveJoke -> {
-                mutableState.value = reduce(action, mutableState.value)
+                updateState(action)
                 saveJoke(action.joke)
             }
             is RandomAction.DeleteJoke -> {
-                mutableState.value = reduce(action, mutableState.value)
+                updateState(action)
                 deleteJoke(action.joke)
             }
             is RandomAction.DownloadJoke -> {
-                mutableState.value = reduce(action, mutableState.value)
+                updateState(action)
                 downloadJoke(action.joke)
             }
             is RandomAction.ShareJoke -> {
-                mutableState.value = reduce(action, mutableState.value)
+                updateState(action)
                 shareUtil.share(action.context, action.joke)
             }
             RandomAction.Refresh -> {
-                mutableState.value = reduce(action, mutableState.value)
+                updateState(action)
                 refreshJokeIfNeeded()
             }
             is RandomAction.JokeLoaded,
             RandomAction.DownloadAnimationFinished,
             RandomAction.DownloadSuccess,
-            RandomAction.ShowError -> mutableState.value = reduce(action, mutableState.value)
+            RandomAction.ShowError -> updateState(action)
         }
     }
 

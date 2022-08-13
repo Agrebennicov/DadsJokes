@@ -8,4 +8,23 @@
     <string name="search">Search</string>
     <string name="random_image_joke">Random Image Joke</string>
     <string name="saved">Saved Jokes</string>
+    <string name="joke_selected">%s joke selected</string>
+    <string name="jokes_selected">%s jokes selected</string>
+    <string name="no_jokes_error_message">Sorry bud, no saved jokes yet</string>
+    <string name="try_again">Try Again</string>
+    <string name="delete_prompt_title">This was a good one…\nAre you sure you want to remove it?</string>
+    <string name="delete_multiple_prompt_title">Those were good ones…\nAre you sure you want to remove them?</string>
+    <string name="delete_prompt_positive_message">Dad…\nPlease stop it</string>
+    <string name="delete_prompt_negative_message">Nope,\nJust kidding</string>
+    <string name="search_hint">Type in at least 3 chars</string>
+    <string name="saved_to_gallery">Saved to gallery</string>
+    <string name="download">Download</string>
+    <string name="share">Share</string>
+    <string name="next_random_joke">Next Random Joke</string>
+    <string name="empty_search_result">Sorry, there is nothing on\n"%s"</string>
+    <string name="intent_chooser_title">Share With:</string>
+    <string name="sharing_content">%s\n\nCheck out more jokes from dad\n%s</string>
+    <string name="sharing_title">Check out my favourite jokes</string>
+    <string name="sharing_joke_number">Joke #%d</string>
+    <string name="sharing_joke_app_link">\n\nCheck out more jokes from dad\n%s</string>
 </resources>
