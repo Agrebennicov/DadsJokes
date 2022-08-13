@@ -3,6 +3,8 @@ package com.agrebennicov.jetpackdemo.features.search
 import androidx.lifecycle.viewModelScope
 import com.agrebennicov.jetpackdemo.common.BaseViewModel
 import com.agrebennicov.jetpackdemo.common.pojo.Joke
+import com.agrebennicov.jetpackdemo.common.util.CollapsingHost
+import com.agrebennicov.jetpackdemo.common.util.DefaultCollapsingHost
 import com.agrebennicov.jetpackdemo.common.util.ShareUtil
 import com.agrebennicov.jetpackdemo.features.search.repository.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,46 +15,36 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
     private val shareUtil: ShareUtil,
-) : BaseViewModel<SearchAction, SearchState>(SearchState()) {
+) : BaseViewModel<SearchAction, SearchState>(SearchState()),
+    CollapsingHost by DefaultCollapsingHost() {
+
     override fun onAction(action: SearchAction) {
         when (action) {
             is SearchAction.Search -> {
-                mutableState.value = reduce(action, mutableState.value)
-                if (action.query.length >= 3) {
+                updateState(action)
+                if (action.query.trim().length >= 3) {
                     search(action.query)
                 }
             }
             is SearchAction.JokeSaved -> {
-                mutableState.value = reduce(action, mutableState.value)
+                updateState(action)
                 saveJoke(action.joke)
             }
             is SearchAction.JokeUnSaved -> {
-                mutableState.value = reduce(action, mutableState.value)
+                updateState(action)
                 deleteJoke(action.joke)
             }
             is SearchAction.ShareJoke -> {
-                mutableState.value = reduce(action, mutableState.value)
+                updateState(action)
                 shareUtil.share(action.context, action.joke)
             }
             SearchAction.Refresh -> {
-                mutableState.value = reduce(action, mutableState.value)
+                updateState(action)
                 refreshIfNeeded()
             }
             SearchAction.Error,
             is SearchAction.QueryChanged,
-            is SearchAction.JokesLoaded -> mutableState.value = reduce(action, mutableState.value)
-        }
-    }
-
-    private fun refreshIfNeeded() {
-        if (state.value.jokes.isNotEmpty() && state.value.showData) {
-            viewModelScope.launch {
-                val localJokesIds =
-                    searchRepository.getStoredJokesIdsByIds(state.value.jokes.map { it.id })
-                val mergedJokes =
-                    state.value.jokes.map { it.copy(isSaved = localJokesIds.contains(it.id)) }
-                onAction(SearchAction.JokesLoaded(mergedJokes))
-            }
+            is SearchAction.JokesLoaded -> updateState(action)
         }
     }
 
@@ -95,13 +87,25 @@ class SearchViewModel @Inject constructor(
 
     private fun search(query: String) {
         viewModelScope.launch {
-            searchRepository.searchJokes(query).collect {
+            searchRepository.searchJokes(query.trim()).collect {
                 val data = it.getOrNull()
                 if (it.isSuccess && data != null) {
                     onAction(SearchAction.JokesLoaded(jokes = data))
                 } else {
                     onAction(SearchAction.Error)
                 }
+            }
+        }
+    }
+
+    private fun refreshIfNeeded() {
+        if (state.value.jokes.isNotEmpty() && state.value.showData) {
+            viewModelScope.launch {
+                val localJokesIds =
+                    searchRepository.getStoredJokesIdsByIds(state.value.jokes.map { it.id })
+                val mergedJokes =
+                    state.value.jokes.map { it.copy(isSaved = localJokesIds.contains(it.id)) }
+                onAction(SearchAction.JokesLoaded(mergedJokes))
             }
         }
     }

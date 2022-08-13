@@ -23,7 +23,6 @@ import com.agrebennicov.jetpackdemo.common.util.getNonAnimatedContentTransform
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalAnimationApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun RandomScreen(
     modifier: Modifier = Modifier,
@@ -143,7 +142,7 @@ private fun ShowContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            text = "Download",
+            text = stringResource(id = R.string.download),
             backGroundColor = MaterialTheme.colors.primaryVariant,
             icon = R.drawable.ic_download,
             onButtonClicked = { onDownloadClicked(joke) },
@@ -160,7 +159,7 @@ private fun ShowContent(
                     .wrapContentHeight(),
                 text = stringResource(if (joke.isSaved) R.string.delete else R.string.save),
                 backGroundColor = MaterialTheme.colors.primaryVariant,
-                icon = if (joke.isSaved) R.drawable.ic_save_white_clicked else R.drawable.ic_save_white,
+                icon = if (joke.isSaved) R.drawable.ic_unsave else R.drawable.ic_save,
                 onButtonClicked = if (joke.isSaved) {
                     { onDeleteClick(joke) }
                 } else {
@@ -175,9 +174,9 @@ private fun ShowContent(
                 modifier = Modifier
                     .weight(0.5f)
                     .wrapContentHeight(),
-                text = "Share",
+                text = stringResource(id = R.string.share),
                 backGroundColor = MaterialTheme.colors.primaryVariant,
-                icon = R.drawable.ic_share_white,
+                icon = R.drawable.ic_share,
                 onButtonClicked = { onShareClick(joke) },
                 enabled = areButtonEnabled
             )
@@ -189,7 +188,7 @@ private fun ShowContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            text = "Next Random Joke",
+            text = stringResource(id = R.string.next_random_joke),
             backGroundColor = MaterialTheme.colors.primaryVariant,
             icon = R.drawable.ic_next,
             onButtonClicked = onNextJokeClick,

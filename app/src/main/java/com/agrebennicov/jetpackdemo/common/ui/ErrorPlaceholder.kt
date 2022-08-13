@@ -113,7 +113,7 @@ fun ErrorPlaceholder(
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     },
-                text = "Try Again",
+                text = stringResource(id = R.string.try_again),
                 backGroundColor = MaterialTheme.colors.primaryVariant,
                 onButtonClicked = onTryAgainButtonClick,
             )

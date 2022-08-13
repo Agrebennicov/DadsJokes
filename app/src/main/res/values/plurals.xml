@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="jokesSelected">
+        <item quantity="one">@string/joke_selected</item>
+        <item quantity="other">@string/jokes_selected</item>
+    </plurals>
+
+    <plurals name="unSavePromptTitle">
+        <item quantity="one">@string/delete_prompt_title</item>
+        <item quantity="other">@string/delete_multiple_prompt_title</item>
+    </plurals>
+</resources>

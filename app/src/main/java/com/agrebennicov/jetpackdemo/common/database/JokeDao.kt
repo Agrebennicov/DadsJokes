@@ -18,6 +18,9 @@ interface JokeDao {
     @Delete
     fun deleteJoke(joke: Joke)
 
+    @Delete
+    fun deleteJokes(jokes: List<Joke>)
+
     @Query("SELECT id FROM $JOKES_TABLE WHERE id IN (:ids)")
     fun getStoredJokesIdsByIds(ids: List<String>): List<String>
 
@@ -26,4 +29,7 @@ interface JokeDao {
 
     @Query("SELECT * FROM $JOKES_TABLE WHERE id IS :id")
     fun getJokeById(id: String): Joke?
+
+    @Query("SELECT * FROM $JOKES_TABLE WHERE content LIKE :query")
+    fun searchJokes(query: String): List<Joke>
 }

@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,7 +46,9 @@ fun SearchView(
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    keyboardController?.hide()
+                    if (textValue.trim().count() >= 3) {
+                        keyboardController?.hide()
+                    }
                     onSearchClicked(textValue)
                 }
             ),
@@ -61,14 +64,14 @@ fun SearchView(
             singleLine = true,
             placeholder = {
                 Text(
-                    text = "Type in at least 3 chars",
+                    text = stringResource(id = R.string.search_hint),
                     style = MaterialTheme.typography.body2
                 )
             },
             leadingIcon = {
                 Image(
                     modifier = Modifier.size(20.dp),
-                    painter = painterResource(R.drawable.ic_search_accent),
+                    painter = painterResource(R.drawable.ic_search_selected),
                     contentDescription = "Search Icon",
                     colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant)
                 )
@@ -80,6 +83,7 @@ fun SearchView(
                             .size(24.dp)
                             .noRippleClickable { onClearButtonClick() },
                         painter = painterResource(R.drawable.ic_close),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
                         contentDescription = "Search Icon"
                     )
                 }

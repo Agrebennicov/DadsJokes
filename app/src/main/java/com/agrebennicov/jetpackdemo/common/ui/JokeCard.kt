@@ -72,38 +72,57 @@ fun JokeCard(
                                     Image(
                                         modifier = Modifier.size(24.dp),
                                         painter = painterResource(R.drawable.ic_checked_circle),
-                                        contentDescription = "Checked"
+                                        contentDescription = "Checked",
+                                        colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
                                     )
                                 else
                                     Image(
                                         modifier = Modifier.size(24.dp),
                                         painter = painterResource(R.drawable.ic_unchecked_circle),
-                                        contentDescription = "Unchecked"
+                                        contentDescription = "Unchecked",
+                                        colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
                                     )
                         }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Image(
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .noRippleClickable { onShareClicked?.invoke() },
-                                painter = painterResource(R.drawable.ic_share_accent),
-                                colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
-                                contentDescription = "Share"
-                            )
-                            Spacer(modifier = Modifier.width(24.dp))
-                            val saveIcon =
-                                if (joke.isSaved) R.drawable.ic_save_accent_clicked else R.drawable.ic_save_accent
-                            Image(
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .noRippleClickable { onSaveClicked?.invoke() },
-                                painter = painterResource(saveIcon),
-                                colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
-                                contentDescription = "Save"
-                            )
+                        if (!isSelectionActive) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Image(
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .noRippleClickable { onShareClicked?.invoke() },
+                                    painter = painterResource(R.drawable.ic_share),
+                                    colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
+                                    contentDescription = "Share"
+                                )
+                                Spacer(modifier = Modifier.width(24.dp))
+
+                                Crossfade(
+                                    targetState = joke.isSaved,
+                                    animationSpec = tween(durationMillis = 100)
+                                ) { isSaved ->
+                                    if (isSaved) {
+                                        Image(
+                                            modifier = Modifier
+                                                .size(24.dp)
+                                                .noRippleClickable { onSaveClicked?.invoke() },
+                                            painter = painterResource(R.drawable.ic_unsave),
+                                            colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
+                                            contentDescription = "Save"
+                                        )
+                                    } else {
+                                        Image(
+                                            modifier = Modifier
+                                                .size(24.dp)
+                                                .noRippleClickable { onSaveClicked?.invoke() },
+                                            painter = painterResource(R.drawable.ic_save),
+                                            colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
+                                            contentDescription = "Save"
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }

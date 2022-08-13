@@ -150,18 +150,18 @@ object BottomNavBarItems {
     val items = listOf(
         BottomNavItem(
             route = NavRoutes.RandomScreen,
-            selectedImage = R.drawable.ic_shuffle_white_clicked,
-            unSelectedImage = R.drawable.ic_shuffle_white
+            selectedImage = R.drawable.ic_shuffle_selected,
+            unSelectedImage = R.drawable.ic_shuffle
         ),
         BottomNavItem(
             route = NavRoutes.SearchScreen,
-            selectedImage = R.drawable.ic_search_clicked,
-            unSelectedImage = R.drawable.ic_search_white
+            selectedImage = R.drawable.ic_search_selected,
+            unSelectedImage = R.drawable.ic_search
         ),
         BottomNavItem(
             route = NavRoutes.SavedScreen,
-            selectedImage = R.drawable.ic_save_white_clicked,
-            unSelectedImage = R.drawable.ic_save_white
+            selectedImage = R.drawable.ic_unsave,
+            unSelectedImage = R.drawable.ic_save
         )
     )
 }
