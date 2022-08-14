@@ -50,6 +50,7 @@ class ShareUtil @Inject constructor() {
 
     companion object {
         private const val SHARE_TYPE = "text/plain"
-        private const val APP_LINK = "https://www.youtube.com/"
+        private const val APP_LINK =
+            "https://play.google.com/store/apps/details?id=com.agrebennicov.jetpackdemo"
     }
 }
