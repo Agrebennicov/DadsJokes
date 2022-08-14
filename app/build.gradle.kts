@@ -1,8 +1,12 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id ("kotlin-kapt")
-    id ("dagger.hilt.android.plugin")
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     kotlin("android")
 }
 
@@ -23,6 +27,16 @@ android {
         }
     }
 
+    signingConfigs {
+        create(BuildTypes.release) {
+            val localProperties = gradleLocalProperties(rootDir)
+            keyAlias = localProperties.getProperty("KEY_RELEASE_ALIAS")
+            keyPassword = localProperties.getProperty("KEY_RELEASE_PASSWORD")
+            storeFile = file(localProperties.getProperty("KEY_RELEASE_PATH"))
+            storePassword = localProperties.getProperty("KEY_RELEASE_STORE_PASSWORD")
+        }
+    }
+
     buildTypes {
         getByName(BuildTypes.debug) {
             isMinifyEnabled = false
@@ -32,16 +46,13 @@ android {
 
         getByName(BuildTypes.release) {
             isDebuggable = false
-            isShrinkResources = true
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            isShrinkResources = false
+            signingConfig = signingConfigs.getByName(BuildTypes.release)
         }
     }
 
     flavorDimensions(AppConfig.dimension)
+
     productFlavors {
         create(BuildFlavor.production) {
             dimension = AppConfig.dimension

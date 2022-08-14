@@ -1,7 +1,5 @@
 //version constants for the Kotlin DSL dependencies
 object Versions {
-
-
     //app level
     const val gradle = "4.2.0"
     const val kotlin = "1.6.10"
@@ -24,6 +22,9 @@ object Versions {
     const val constraintLayout = "1.0.0-beta02"
     const val lottie = "5.2.0"
     const val vectorAnimation = "1.2.0"
+    const val crashlytics = "18.2.12"
+    const val analytics = "21.1.0"
+
 
     //test
     const val junit = "4.12"

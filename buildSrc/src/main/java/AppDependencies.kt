@@ -4,6 +4,11 @@ object AppDependencies {
     //Core
     private const val coreKtx = "androidx.core:core-ktx:${Versions.coreKtx}"
 
+    // Firebase
+    private const val analytics = "com.google.firebase:firebase-analytics-ktx:${Versions.analytics}"
+    private const val crashlytics =
+        "com.google.firebase:firebase-crashlytics-ktx:${Versions.crashlytics}"
+
     // Compose
     private const val compose = "androidx.compose.ui:ui:${Versions.jetpackCompose}"
     private const val composeTooling = "androidx.compose.ui:ui-tooling:${Versions.jetpackCompose}"
@@ -83,6 +88,8 @@ object AppDependencies {
         add(constraintLayout)
         add(lottie)
         add(vectorAnimation)
+        add(crashlytics)
+        add(analytics)
     }
 
     val kaptLibraries = arrayListOf<String>().apply {
@@ -94,7 +101,6 @@ object AppDependencies {
     val androidTestLibraries = arrayListOf<String>().apply {
         add(extJUnit)
         add(espressoCore)
-
     }
 
     val testLibraries = arrayListOf<String>().apply {
