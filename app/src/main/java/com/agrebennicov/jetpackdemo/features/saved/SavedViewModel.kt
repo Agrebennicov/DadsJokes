@@ -64,7 +64,13 @@ class SavedViewModel @Inject constructor(
                 showData = true
             )
             is SavedAction.UnSaveJoke -> oldState.copy(jokesToUnSave = listOf(action.joke))
-            SavedAction.UnSaveJokeCancel,
+            is SavedAction.UnSaveJokeCancel -> {
+                oldState.copy(
+                    jokesToUnSave = emptyList(),
+                    isSelectingMode = false,
+                    jokes = oldState.jokes.map { it.copy(isSelected = false) }
+                )
+            }
             is SavedAction.UnSaveJokeConfirmation -> oldState.copy(
                 jokesToUnSave = emptyList(),
                 isSelectingMode = false,
