@@ -5,7 +5,7 @@ Just an app for fun :)
 
 Developed by [Mark Ghelas](https://github.com/Erdboden) / [Mark Ghelas](https://github.com/marcghelas)(yeap, same guy) and [Alex Grebennicov](https://github.com/Agrebennicov)
 
-Thanks to [Alex Iachimov](https://github.com/AlexIach) for contribution
+Thanks to [Alex Iachimov](https://github.com/AlexIach) / [Alex Iachimov](https://github.com/alexandru-lachimov) for contribution
 
 
 Rolled out to [Play Store](https://play.google.com/store/apps/details?id=com.agrebennicov.jetpackdemo) so you can check it out 
